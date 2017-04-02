@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "247002756421",
+    "project_id": "firebase-your-place"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:247002756421:android:8d12725eea23f7a1",
+        "android_client_info": {
+          "package_name": "tonchev.yourplace"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "247002756421-ohvphu7dgs2ha7mqva7ppo9ebrcsp28b.apps.googleusercontent.com",
+          "client_type": 3
+        },
+        {
+          "client_id": "247002756421-ojvic2e1p9aj63id40dbipb0spgp7cs7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "tonchev.yourplace",
+            "certificate_hash": "839d385e5db8918ccd1008d38c581784e173612e"
+          }
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyArJaKw97Nz3D54Lf476_Myc6jd2azX1us"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
