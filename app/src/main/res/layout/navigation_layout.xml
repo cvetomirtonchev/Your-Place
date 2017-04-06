@@ -1,22 +1,51 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<LinearLayout xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-    app:subtitleTextColor="@color/golden"
-    android:subtitleTextColor="@color/golden"
-    android:titleTextColor="@color/golden"
-    app:titleTextColor="@color/golden"
 
+
+    app:titleTextColor="@color/golden"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-
-    android:id="@+id/navigation_action">
-    <SearchView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content">
-
-    </SearchView>
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
 
 
+    <android.support.v7.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        >
+        <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:orientation="vertical"
 
-</android.support.v7.widget.Toolbar>
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/navigation_action">
+        <EditText
+            android:id="@+id/search_field"
+
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@android:color/white"
+            android:maxLines="1"
+            />
+        </android.support.v7.widget.Toolbar>
+
+    </android.support.v7.widget.CardView>
+    <android.support.design.widget.TabLayout
+        android:id="@+id/tab_layout"
+        android:background="@color/blue"
+        android:alpha="0.8"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:tabTextColor="@color/bronze"
+        app:tabSelectedTextColor="@color/bronze"
+       >
+
+
+
+    </android.support.design.widget.TabLayout>
+</LinearLayout>
+
+
+
