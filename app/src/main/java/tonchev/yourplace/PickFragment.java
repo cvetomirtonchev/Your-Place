@@ -22,7 +22,7 @@ public class PickFragment extends Fragment {
 
     private PieChart chart;
     private float[]yData ={10.5f,10.5f,10.5f,10.5f,10.5f};
-    private String[]xData ={"BAR","CLUB","CASINO","ATM","HOTEL"};
+    private String[]xData ={"BARS","ATMS","CASINOS","HOTELS","CLUBS"};
 
 
     @Override
@@ -33,6 +33,8 @@ public class PickFragment extends Fragment {
         chart.setRotationEnabled(false);
         chart.setHoleRadius(25f);
         chart.setTransparentCircleAlpha(10);
+        chart.animateY(2500);
+
         //chart.setCenterText("");
         //chart.setCenterTextSize(10);
        // chart.setDrawEntryLabels(true);
@@ -47,7 +49,7 @@ public class PickFragment extends Fragment {
         ArrayList<PieEntry> yEntrys = new ArrayList<>();
         ArrayList<String> xEntrys = new ArrayList<>();
         for (int i = 0; i<yData.length;i++){
-            yEntrys.add(new PieEntry(yData[i]));
+            yEntrys.add(new PieEntry(yData[i],xData[i]));
         }
         for (int i = 1;i<xData.length; i++){
             xEntrys.add(xData[i]);
@@ -56,6 +58,7 @@ public class PickFragment extends Fragment {
         // distanciqta mejdu razrezikite
         pieDataSet.setSliceSpace(2);
         // Kolko da e golqm teksta vutre
+        
         pieDataSet.setValueTextSize(12);
         pieDataSet.setColor(R.color.blue);
         PieData pieData = new PieData(pieDataSet);
