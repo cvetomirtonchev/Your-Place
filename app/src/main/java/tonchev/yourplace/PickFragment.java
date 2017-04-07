@@ -8,10 +8,14 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.github.mikephil.charting.charts.PieChart;
+import com.github.mikephil.charting.data.Entry;
 import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
+import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.utils.ViewPortHandler;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 
@@ -34,6 +38,7 @@ public class PickFragment extends Fragment {
         chart.setHoleRadius(25f);
         chart.setTransparentCircleAlpha(10);
         chart.animateY(2500);
+
 
         //chart.setCenterText("");
         //chart.setCenterTextSize(10);
@@ -58,12 +63,32 @@ public class PickFragment extends Fragment {
         // distanciqta mejdu razrezikite
         pieDataSet.setSliceSpace(2);
         // Kolko da e golqm teksta vutre
-        
+        pieDataSet.setValueTextColor(R.color.golden);
         pieDataSet.setValueTextSize(12);
         pieDataSet.setColor(R.color.blue);
+        pieDataSet.setValueFormatter(new MyValueFormatter());
+
         PieData pieData = new PieData(pieDataSet);
         chart.setData(pieData);
+        chart.setUsePercentValues(false);
         chart.invalidate();
+    }
+    public class MyValueFormatter implements ValueFormatter {
+
+        private DecimalFormat mFormat;
+
+        public MyValueFormatter() {
+            mFormat = new DecimalFormat("###,###,###"); // use no decimals
+        }
+
+        @Override
+        public String getFormattedValue(float value, Entry entry, int dataSetIndex, ViewPortHandler viewPortHandler) {
+
+            // write your logic here
+            if(value < 100) return "";
+
+            return mFormat.format(value);
+        }
     }
 
 }
