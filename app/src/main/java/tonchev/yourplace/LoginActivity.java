@@ -20,7 +20,7 @@ import static com.google.android.gms.common.api.GoogleApiClient.Builder;
 public class LoginActivity extends AppCompatActivity implements OnConnectionFailedListener{
 
     public static final int REQUEST_CODE = 1;
-    private GoogleApiClient mGoogleApiClient;
+    public static GoogleApiClient mGoogleApiClient;
 
     private SignInButton signInButton;
 
@@ -43,13 +43,12 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(LoginActivity.this,ChoseActivity.class);
-//                startActivity(intent);
                   signIn();
             }
         });
 
     }
+
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
         startActivityForResult(signInIntent, REQUEST_CODE);

@@ -1,32 +1,27 @@
 package tonchev.yourplace;
 
-import android.app.Activity;
-import android.app.Fragment;
-import android.content.res.ColorStateList;
-import android.graphics.Color;
-import android.support.annotation.IdRes;
-import android.support.annotation.NonNull;
-import android.support.design.widget.BottomNavigationView;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
-import java.io.FileDescriptor;
-import java.io.PrintWriter;
-import java.util.List;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
+
+import static tonchev.yourplace.LoginActivity.mGoogleApiClient;
 
 public class ChoseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
@@ -62,6 +57,25 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
         PickFragment f = new PickFragment();
         FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().add(R.id.picker_layout, f,"Pick").commit();
+        nTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                if (tab.getText().equals("Map")) {
+                    Intent intent = new Intent(ChoseActivity.this, MapsActivity.class);
+                    startActivity(intent);
+                }
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
 
 
 
@@ -114,11 +128,47 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
         int id = item.getItemId();
         if( id == R.id.nav_my_places){
 
-        }else if( id == R.id.nav_logout){
-
+        }
+        else if( id == R.id.nav_logout){
+            Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+                    new ResultCallback<Status>() {
+                        @Override
+                        public void onResult(Status status) {
+                            // ...
+                            Toast.makeText(getApplicationContext(),"Logged Out",Toast.LENGTH_SHORT).show();
+                            Intent i=new Intent(getApplicationContext(),LoginActivity.class);
+                            startActivity(i);
+                        }
+                    });
         }
 
         nDrawerLayoun.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    @Override
+    protected void onStart() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestEmail()
+                .build();
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
+                .build();
+        mGoogleApiClient.connect();
+        super.onStart();
+    }
+
+//    private void signOut() {
+//        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
+//                new ResultCallback<Status>() {
+//                    @Override
+//                    public void onResult(Status status) {
+//                        // ...
+//
+//                        Toast.makeText(ChoseActivity.this, "You have successfully logged out.", Toast.LENGTH_SHORT).show();
+//                        Intent intent = new Intent(ChoseActivity.this, LoginActivity.class);
+//                        startActivity(intent);
+//                    }
+//                });
+//    }
 }
