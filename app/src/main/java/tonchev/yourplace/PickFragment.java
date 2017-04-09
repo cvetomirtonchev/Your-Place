@@ -37,16 +37,13 @@ public class PickFragment extends Fragment {
         chart.setRotationEnabled(false);
         chart.setHoleRadius(25f);
         chart.setTransparentCircleAlpha(10);
-        chart.animateY(2500);
+        chart.animateY(1000);
 
 
         //chart.setCenterText("");
         //chart.setCenterTextSize(10);
        // chart.setDrawEntryLabels(true);
         addDataSet();
-
-
-
         return root;
     }
 

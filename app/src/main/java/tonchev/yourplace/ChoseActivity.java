@@ -47,22 +47,30 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
         navigationView.setNavigationItemSelectedListener(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
         //TabLayout
         nTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         nTabLayout.addTab(nTabLayout.newTab().setText("Pick"));
         nTabLayout.addTab(nTabLayout.newTab().setText("Map"));
+        TabLayout.Tab tab = nTabLayout.getTabAt(0);
+        tab.select();
         // search Field
         searchField = (EditText) findViewById(R.id.search_field);
-        PickFragment f = new PickFragment();
-        FragmentManager fragmentManager = getSupportFragmentManager();
+        final PickFragment f = new PickFragment();
+        final MapFragment m = new MapFragment();
+        final FragmentManager fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().add(R.id.picker_layout, f,"Pick").commit();
+
+
         nTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getText().equals("Map")) {
-                    Intent intent = new Intent(ChoseActivity.this, MapsActivity.class);
-                    startActivity(intent);
+                    fragmentManager.beginTransaction().remove(f).commit();
+                    fragmentManager.beginTransaction().add(R.id.picker_layout, m,"Map").commit();
+                }
+                if (tab.getText().equals("Pick")) {
+                    fragmentManager.beginTransaction().remove(m).commit();
+                    fragmentManager.beginTransaction().add(R.id.picker_layout, f,"Pick").commit();
                 }
             }
 
@@ -110,9 +118,6 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
                     }
                 });
             }
-
-
-
         }
         return super.onOptionsItemSelected(item);
     }
@@ -152,17 +157,4 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
         super.onStart();
     }
 
-//    private void signOut() {
-//        Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
-//                new ResultCallback<Status>() {
-//                    @Override
-//                    public void onResult(Status status) {
-//                        // ...
-//
-//                        Toast.makeText(ChoseActivity.this, "You have successfully logged out.", Toast.LENGTH_SHORT).show();
-//                        Intent intent = new Intent(ChoseActivity.this, LoginActivity.class);
-//                        startActivity(intent);
-//                    }
-//                });
-//    }
 }
