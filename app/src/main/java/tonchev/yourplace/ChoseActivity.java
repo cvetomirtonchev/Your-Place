@@ -76,10 +76,6 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
 
             }
         });
-
-
-
-
     }
 
     @Override
@@ -101,8 +97,6 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-
-
         if(id == R.id.search_icon){
 
             if(!searchField.getText().toString().equals("")) {
