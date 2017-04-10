@@ -2,6 +2,7 @@ package tonchev.yourplace.modul;
 
 import android.support.annotation.NonNull;
 
+import java.io.Serializable;
 import java.sql.Time;
 import java.util.ArrayList;
 
@@ -9,7 +10,9 @@ import java.util.ArrayList;
  * Created by Цветомир on 2.4.2017 г..
  */
 
-public class Place implements Comparable<Place> {
+public class Place implements Comparable<Place>,Serializable {
+
+
 
     public enum Type {CLUB,BAR,HOTEl,ATM,CASIONO}
 
@@ -22,22 +25,16 @@ public class Place implements Comparable<Place> {
     private ArrayList<Integer> pictures;
     private double rating;
 
-
-
-
-
-
-
-
-
-
-
-
-
+    public Place(String name) {
+        this.name = name;
+    }
 
     @Override
     public int compareTo(Place o) {
         //TODO
         return this.name.compareTo(o.name);
+    }
+    public String getName() {
+        return name;
     }
 }

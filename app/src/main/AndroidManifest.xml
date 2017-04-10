@@ -30,10 +30,10 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY"/>
+            android:value="AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY" />
 
-
-        <activity android:name=".OpitActivity"></activity>
+        <activity android:name=".OpitActivity" />
+        <activity android:name=".PlaceActivity"></activity>
     </application>
 
 </manifest>
