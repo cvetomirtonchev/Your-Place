@@ -30,8 +30,10 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="@string/google_maps_key" />
+            android:value="AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY"/>
 
+
+        <activity android:name=".OpitActivity"></activity>
     </application>
 
 </manifest>
