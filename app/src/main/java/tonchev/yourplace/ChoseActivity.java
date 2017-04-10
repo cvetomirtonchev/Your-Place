@@ -46,6 +46,10 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
         NavigationView navigationView = (NavigationView) findViewById(R.id.navigation_menu);
         navigationView.setNavigationItemSelectedListener(this);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+        mTogle.setDrawerIndicatorEnabled(true);
+        //nToolBar.setNavigationIcon(R.mipmap.ic_menu_black_24dp);
+
 
         //TabLayout
         nTabLayout = (TabLayout) findViewById(R.id.tab_layout);

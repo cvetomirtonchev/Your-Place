@@ -31,6 +31,7 @@ public class OpitActivity extends AppCompatActivity {
             public void onPlaceSelected(Place place) {
                 // TODO: Get info about the selected place.
                 tv.setText(place.getName());
+
             }
 
 

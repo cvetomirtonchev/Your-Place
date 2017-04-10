@@ -57,6 +57,12 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                 startActivity(intent);
             }
         });
+        findViewById(R.id.vlizane).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(LoginActivity.this,ChoseActivity.class));
+            }
+        });
 
     }
 
