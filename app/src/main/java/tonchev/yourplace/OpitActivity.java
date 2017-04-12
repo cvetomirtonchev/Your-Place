@@ -1,47 +1,345 @@
 package tonchev.yourplace;
 
+import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentActivity;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
 
-import com.google.android.gms.common.api.Status;
-import com.google.android.gms.location.places.Place;
-import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
-import com.google.android.gms.location.places.ui.PlaceSelectionListener;
+import com.google.android.gms.location.LocationListener;
+import com.google.android.gms.maps.CameraUpdateFactory;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.MapView;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 
-public class OpitActivity extends AppCompatActivity {
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-    private TextView tv;
-    private ImageView img;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 
+public class OpitActivity extends FragmentActivity implements LocationListener, OnMapReadyCallback {
+
+    //instance variables for Marker icon drawable resources
+    private int userIcon, foodIcon, drinkIcon, shopIcon, otherIcon;
+
+    //the map
+    private GoogleMap theMap;
+    private MapView mapView;
+    private Fragment fr;
+
+    //location manager
+    private LocationManager locMan;
+
+    //user marker
+    private Marker userMarker;
+
+    //places of interest
+    private Marker[] placeMarkers;
+    //max
+    private final int MAX_PLACES = 20;//most returned from google
+    //marker options
+    private MarkerOptions[] places;
+
+    private boolean updateFinished = true;
+
+    @SuppressLint("NewApi")
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_opit);
-        img = (ImageView) findViewById(R.id.place_img);
-        tv = (TextView) findViewById(R.id.text_name);
 
-        PlaceAutocompleteFragment autocompleteFragment = (PlaceAutocompleteFragment)
-                getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        //get drawable IDs
+        userIcon = R.drawable.common_google_signin_btn_icon_dark;
+        foodIcon = R.drawable.common_google_signin_btn_icon_dark_focused;
+        drinkIcon = R.drawable.common_google_signin_btn_icon_dark_focused;
+        shopIcon = R.drawable.common_google_signin_btn_icon_dark_focused;
+        otherIcon = R.drawable.common_google_signin_btn_icon_dark_focused;
 
-        autocompleteFragment.setOnPlaceSelectedListener(new PlaceSelectionListener() {
-            @Override
-            public void onPlaceSelected(Place place) {
-                // TODO: Get info about the selected place.
-                tv.setText(place.getName());
+        FragmentManager fm = getSupportFragmentManager();
+        MapFragment fragment = (MapFragment) fm.findFragmentById(R.id.the_map);
+        fm.beginTransaction().add(fragment,"MapFrag").commit();
+        //find out if we already have it
 
+    }
+
+    //location listener functions
+
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.v("MyMapActivity", "location changed");
+        Log.v("Test", "location change block");
+        updatePlaces();
+    }
+
+    public void onProviderDisabled(String provider) {
+        Log.v("MyMapActivity", "provider disabled");
+    }
+
+    public void onProviderEnabled(String provider) {
+        Log.v("MyMapActivity", "provider enabled");
+    }
+
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+        Log.v("MyMapActivity", "status changed");
+    }
+
+    /*
+     * update the place markers
+     */
+    private void updatePlaces() {
+        //get location manager
+        //get last location
+        if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        Location lastLoc = locMan.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        double lat = lastLoc.getLatitude();
+        double lng = lastLoc.getLongitude();
+        //create LatLng
+        LatLng lastLatLng = new LatLng(lat, lng);
+
+        //remove any existing marker
+        if (userMarker != null) userMarker.remove();
+        //create and set marker properties
+        userMarker = theMap.addMarker(new MarkerOptions()
+                .position(lastLatLng)
+                .title("You are here")
+                .snippet("Your last recorded location"));
+        //move to location
+        theMap.animateCamera(CameraUpdateFactory.newLatLng(lastLatLng), 3000, null);
+
+        //build places query string
+        String placesSearchStr = "https://maps.googleapis.com/maps/api/place/nearbysearch/" +
+                "json?location=" + lat + "," + lng +
+                "&radius=1000&sensor=true" +
+                "&types=bank" +
+                "&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
+
+        //execute query
+        new GetPlaces().execute(placesSearchStr);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
+        if (theMap == null) {
+            //get the map
+            theMap = googleMap;
+//                    ((SupportMapFragment) getSupportFragmentManager().findFragmentById(R.id.the_map).getMap());
+            //check in case map/ Google Play services not available
+            if (theMap != null) {
+                //ok - proceed
+                theMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
+                //create marker array
+                placeMarkers = new Marker[MAX_PLACES];
+                //update location
+                locMan = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+                if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                    // TODO: Consider calling
+                    //    ActivityCompat#requestPermissions
+                    // here to request the missing permissions, and then overriding
+                    //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                    //                                          int[] grantResults)
+                    // to handle the case where the user grants the permission. See the documentation
+                    // for ActivityCompat#requestPermissions for more details.
+                    return;
+                }
+                locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30000, 100, (android.location.LocationListener) this);
             }
+        }
 
+    }
 
-            @Override
-            public void onError(Status status) {
-                // TODO: Handle the error.
-                Toast.makeText(OpitActivity.this, "An error occurred: " + status, Toast.LENGTH_LONG).show();
+    private class GetPlaces extends AsyncTask<String, Void, String> {
+        @Override
+        protected String doInBackground(String... placesURL) {
+            //fetch places
+            updateFinished = false;
+            StringBuilder placesBuilder = new StringBuilder();
+            for (String placeSearchURL : placesURL) {
+                try {
+
+                    URL requestUrl = new URL(placeSearchURL);
+                    HttpURLConnection connection = (HttpURLConnection) requestUrl.openConnection();
+                    connection.setRequestMethod("GET");
+                    connection.connect();
+                    int responseCode = connection.getResponseCode();
+
+                    if (responseCode == HttpURLConnection.HTTP_OK) {
+
+                        BufferedReader reader = null;
+
+                        InputStream inputStream = connection.getInputStream();
+                        if (inputStream == null) {
+                            return "";
+                        }
+                        reader = new BufferedReader(new InputStreamReader(inputStream));
+
+                        String line;
+                        while ((line = reader.readLine()) != null) {
+
+                            placesBuilder.append(line + "\n");
+                        }
+
+                        if (placesBuilder.length() == 0) {
+                            return "";
+                        }
+
+                        Log.d("test", placesBuilder.toString());
+                    } else {
+                        Log.i("test", "Unsuccessful HTTP Response Code: " + responseCode);
+                    }
+                } catch (MalformedURLException e) {
+                    Log.e("test", "Error processing Places API URL", e);
+                } catch (IOException e) {
+                    Log.e("test", "Error connecting to Places API", e);
+                }
             }
-        });
+            return placesBuilder.toString();
+        }
 
+        //process data retrieved from doInBackground
+        protected void onPostExecute(String result) {
+            //parse place data returned from Google Places
+            //remove existing markers
+            if (placeMarkers != null) {
+                for (int pm = 0; pm < placeMarkers.length; pm++) {
+                    if (placeMarkers[pm] != null)
+                        placeMarkers[pm].remove();
+                }
+            }
+            try {
+                //parse JSON
 
+                //create JSONObject, pass stinrg returned from doInBackground
+                JSONObject resultObject = new JSONObject(result);
+                //get "results" array
+                JSONArray placesArray = resultObject.getJSONArray("results");
+                //marker options for each place returned
+                places = new MarkerOptions[placesArray.length()];
+                //loop through places
+
+                Log.d("test", "The placesArray length is " + placesArray.length() + "...............");
+
+                for (int p = 0; p < placesArray.length(); p++) {
+                    //parse each place
+                    //if any values are missing we won't show the marker
+                    boolean missingValue = false;
+                    LatLng placeLL = null;
+                    String placeName = "";
+                    String vicinity = "";
+                    int currIcon = otherIcon;
+                    try {
+                        //attempt to retrieve place data values
+                        missingValue = false;
+                        //get place at this index
+                        JSONObject placeObject = placesArray.getJSONObject(p);
+                        //get location section
+                        JSONObject loc = placeObject.getJSONObject("geometry")
+                                .getJSONObject("location");
+                        //read lat lng
+                        placeLL = new LatLng(Double.valueOf(loc.getString("lat")),
+                                Double.valueOf(loc.getString("lng")));
+                        //get types
+                        JSONArray types = placeObject.getJSONArray("types");
+                        //loop through types
+                        for (int t = 0; t < types.length(); t++) {
+                            //what type is it
+                            String thisType = types.get(t).toString();
+                            //check for particular types - set icons
+                            if (thisType.contains("hospital")) {
+                                currIcon = foodIcon;
+                                break;
+                            } else if (thisType.contains("health")) {
+                                currIcon = drinkIcon;
+                                break;
+                            } else if (thisType.contains("doctor")) {
+                                currIcon = shopIcon;
+                                break;
+                            }
+                        }
+                        //vicinity
+                        vicinity = placeObject.getString("vicinity");
+                        //name
+                        placeName = placeObject.getString("name");
+                    } catch (JSONException jse) {
+                        Log.v("PLACES", "missing value");
+                        missingValue = true;
+                        jse.printStackTrace();
+                    }
+                    //if values missing we don't display
+                    if (missingValue) places[p] = null;
+                    else
+                        places[p] = new MarkerOptions()
+                                .position(placeLL)
+                                .title(placeName)
+                                .snippet(vicinity);
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            if (places != null && placeMarkers != null) {
+                Log.d("test", "The placeMarkers length is " + placeMarkers.length + "...............");
+
+                for (int p = 0; p < places.length && p < placeMarkers.length; p++) {
+                    //will be null if a value was missing
+
+                    if (places[p] != null) {
+
+                        placeMarkers[p] = theMap.addMarker(places[p]);
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (theMap != null) {
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
+            locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30000, 100, (android.location.LocationListener) this);
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if(theMap!=null){
+            locMan.removeUpdates((android.location.LocationListener) this);
+        }
     }
 }

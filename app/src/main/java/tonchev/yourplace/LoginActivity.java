@@ -53,7 +53,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         opit.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, OpitActivity.class);
+                Intent intent = new Intent(LoginActivity.this, ChoseActivity.class);
                 startActivity(intent);
             }
         });
