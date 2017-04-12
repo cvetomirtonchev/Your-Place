@@ -10,9 +10,7 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -26,9 +24,7 @@ import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
-
-import java.io.Serializable;
-import java.util.Locale;
+import com.google.android.gms.maps.model.LatLng;
 
 import static tonchev.yourplace.LoginActivity.mGoogleApiClient;
 
@@ -111,9 +107,11 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
             @Override
             public void onPlaceSelected(Place place) {
                 Intent intent = new Intent(ChoseActivity.this, PlaceActivity.class);
-                tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(place.getName().toString());
-                intent.putExtra("mqsto", mqsto);
+//                tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(place.getName().toString());
+//                intent.putExtra("mqsto", mqsto);
                 startActivity(intent);
+
+                LatLng coordinates = place.getLatLng();
 
 //                Toast.makeText(ChoseActivity.this,""+place,Toast.LENGTH_LONG).show();
 //                Log.d("ceko ",""+place);
