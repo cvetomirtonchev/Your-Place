@@ -14,6 +14,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.google.android.gms.location.places.Place;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
@@ -49,6 +50,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     private MarkerOptions[] places;
     private int otherIcon;
     private int foodIcon;
+
+    interface ComunicatorFragment{
+        void searchResult(Place place);
+    }
 
 
     @Override

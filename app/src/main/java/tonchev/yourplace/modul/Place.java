@@ -1,5 +1,6 @@
 package tonchev.yourplace.modul;
 
+import android.location.Location;
 import android.support.annotation.NonNull;
 
 import java.io.Serializable;
@@ -24,6 +25,7 @@ public class Place implements Comparable<Place>,Serializable {
     private int frontPic;
     private ArrayList<Integer> pictures;
     private double rating;
+
 
     public Place(String name) {
         this.name = name;

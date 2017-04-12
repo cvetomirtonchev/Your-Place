@@ -16,6 +16,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
@@ -23,6 +24,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.location.places.AutocompleteFilter;
+import com.google.android.gms.location.places.GeoDataApi;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
@@ -32,13 +35,14 @@ import java.util.Locale;
 
 import static tonchev.yourplace.LoginActivity.mGoogleApiClient;
 
-public class ChoseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
+public class ChoseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,MapFragment.ComunicatorFragment {
 
     private DrawerLayout nDrawerLayoun;
     private ActionBarDrawerToggle mTogle;
     private Toolbar nToolBar;
     private TabLayout nTabLayout;
     private EditText searchField;
+
     PlaceAutocompleteFragment searchBar;
     Place searchedPlace;
 
@@ -106,17 +110,30 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
             }
         });
         //SearchBar
+
         searchBar = (PlaceAutocompleteFragment) getFragmentManager().findFragmentById(R.id.place_autocomplete_fragment);
+        // Choose Country
+        AutocompleteFilter typeFilter = new AutocompleteFilter.Builder()
+                .setCountry("BG")
+                .setTypeFilter(21)
+                .build();
+
+
+        searchBar.setFilter(typeFilter);
+
         searchBar.setOnPlaceSelectedListener(new PlaceSelectionListener() {
             @Override
             public void onPlaceSelected(Place place) {
                 Intent intent = new Intent(ChoseActivity.this, PlaceActivity.class);
                 tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(place.getName().toString());
                 intent.putExtra("mqsto", mqsto);
+                intent.putExtra("ID",place.getId());
                 startActivity(intent);
 
-//                Toast.makeText(ChoseActivity.this,""+place,Toast.LENGTH_LONG).show();
-//                Log.d("ceko ",""+place);
+
+
+               // Toast.makeText(ChoseActivity.this,""+place,Toast.LENGTH_LONG).show();
+                      Log.d("ceko ",""+place);
             }
 
             @Override
@@ -199,4 +216,8 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
         super.onStart();
     }
 
+    @Override
+    public void searchResult(Place place) {
+
+    }
 }

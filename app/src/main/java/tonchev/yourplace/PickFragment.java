@@ -44,6 +44,7 @@ public class PickFragment extends Fragment {
         //chart.setCenterTextSize(10);
        // chart.setDrawEntryLabels(true);
         addDataSet();
+
         return root;
     }
 
