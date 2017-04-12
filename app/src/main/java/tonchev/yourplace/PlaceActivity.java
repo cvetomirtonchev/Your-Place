@@ -32,12 +32,12 @@ import tonchev.yourplace.modul.Place;
 public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
     private TextView name ;
     private Place place;
+    private TextView placeRating;
     private GoogleMap mMap;
     private MapView mapView;
     private GoogleApiClient mGoogleApiClient;
     private ImageView firstImage;
     private String placeID;
-    private Context context;
     private ResultCallback<PlacePhotoResult> mDisplayPhotoResultCallback;
     private RatingBar ratingBar;
 
@@ -52,7 +52,9 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
         mapView = (MapView) findViewById(R.id.map_view);
         firstImage = (ImageView) findViewById(R.id.image_v);
         ratingBar = (RatingBar) findViewById(R.id.activity_place_rating);
-        ratingBar.setRating(5);
+        ratingBar.setRating(Float.parseFloat(place.getRating()));
+        placeRating = (TextView) findViewById(R.id.activity_place_rating_text);
+        placeRating.setText(place.getRating());
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)

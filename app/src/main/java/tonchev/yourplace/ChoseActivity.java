@@ -1,6 +1,7 @@
 package tonchev.yourplace;
 
 import android.content.Intent;
+import android.location.Location;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.design.widget.TabLayout;
@@ -122,8 +123,16 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
             @Override
             public void onPlaceSelected(Place place) {
                 Intent intent = new Intent(ChoseActivity.this, PlaceActivity.class);
+                String name = place.getName().toString();
+                String address = place.getAddress().toString();
+                String id = place.getId();
+                String rating = String.valueOf(place.getRating());
+                String phone = place.getPhoneNumber().toString();
+                String webAdress = place.getWebsiteUri().toString();
 
-                tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(place.getName().toString());
+
+
+                tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(id,name,address,rating,phone,webAdress);
                 intent.putExtra("mqsto", mqsto);
                 intent.putExtra("ID",place.getId());
                 startActivity(intent);

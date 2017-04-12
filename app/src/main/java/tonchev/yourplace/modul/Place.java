@@ -5,6 +5,8 @@ import android.location.Location;
 import android.support.annotation.NonNull;
 
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.io.Serializable;
 import java.sql.Time;
 import java.util.ArrayList;
@@ -20,20 +22,17 @@ public class Place implements Comparable<Place>,Serializable {
 //    public enum Type {CLUB,BAR,HOTEl,ATM,CASIONO}
 
 //    private Type type;
-
-
-
-
-
-
-
-
+    private String id;
     private String name;
     private String adress;
     private String rating;
     private String category;
     private String openNow;
-//    private String adress;
+    private String phoneNumber;
+    private String webAdress;
+
+
+
 //    private Time workTime;
 //    private double distance;
 
@@ -46,11 +45,24 @@ public class Place implements Comparable<Place>,Serializable {
     public Place(String name) {
         this.name = name;
     }
+
+
+    public Place(String id, String name, String adress, String rating, String phoneNumber, String webAdress) {
+        this.id = id;
+        this.name = name;
+        this.adress = adress;
+        this.rating = rating;
+        this.phoneNumber = phoneNumber;
+        this.webAdress = webAdress;
+
+    }
+
     @Override
     public int compareTo(Place o) {
         //TODO
         return this.name.compareTo(o.name);
     }
+
 
     public String getName() {
         return name;
@@ -83,4 +95,22 @@ public class Place implements Comparable<Place>,Serializable {
     public void setOpenNow(String open) {
         this.openNow = open;
     }
+
+    public String getId() {
+        return id;
+    }
+
+    public String getAdress() {
+        return adress;
+    }
+
+    public String getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    public String getWebAdress() {
+        return webAdress;
+    }
+
+
 }
