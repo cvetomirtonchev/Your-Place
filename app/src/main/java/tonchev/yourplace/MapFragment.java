@@ -11,10 +11,14 @@ import android.os.Bundle;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.android.gms.location.places.Place;
@@ -54,7 +58,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     private int otherIcon;
     private int foodIcon;
     private LatLng location;
-    private ArrayList<tonchev.yourplace.modul.Place> returnedPlaces = new ArrayList<>();
+    private ArrayList<tonchev.yourplace.modul.Place> returnedPlaces ;
+    private Button generateList;
+    private Button backToMap;
+    private RecyclerView recyclerView;
 
     interface ComunicatorFragment{
         void searchResult(Place place);
@@ -68,14 +75,40 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 //        SupportMapFragment mapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager()
 //                .findFragmentById(R.id.map);
 //        mapFragment.getMapAsync(this);
-
+        generateList = (Button) root.findViewById(R.id.button_generate_list);
+        backToMap = (Button) root.findViewById(R.id.button_back_to_map);
         mapView = (MapView) root.findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
         mapView.getMapAsync(this);
+        returnedPlaces = new ArrayList<>();
+        recyclerView = (RecyclerView) root.findViewById(R.id.map_list_view);
+        final PlaceListAdapter adapter = new PlaceListAdapter(getActivity(),returnedPlaces);
 
         foodIcon = R.mipmap.ic_place_black_24dp;
         otherIcon = R.mipmap.ic_place_black_24dp;
+
+        generateList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                generateList.setVisibility(View.GONE);
+                backToMap.setVisibility(View.VISIBLE);
+                recyclerView.setAdapter(adapter);
+                recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1, LinearLayoutManager.VERTICAL, false));
+                mapView.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+            }
+        });
+        backToMap.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                backToMap.setVisibility(View.GONE);
+                generateList.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+                mapView.setVisibility(View.VISIBLE);
+
+            }
+        });
 
 
         return root;
@@ -107,7 +140,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         mMap.setMyLocationEnabled(true);
         mMap.addMarker(new MarkerOptions().position(location).title("My new Location"));
         mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(42.656669, 23.345751), 15));
-        new MapFragment.GetPlaces().execute();
+        if(ChoseActivity.selection!=null) {
+            returnedPlaces.clear();
+            new MapFragment.GetPlaces().execute();
+
+        }
     }
 
     @Override
@@ -215,7 +252,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 //                    Log.e("test", "Error connecting to Places API", e);
 //                }
 //            }
-            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=42.656669,23.345751&radius=2000&sensor=true&types=atm&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
+            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=42.656669,23.345751&radius=2000&sensor=true&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
 
             try {
                 URL url = new URL(request);
