@@ -22,6 +22,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -214,7 +215,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 //                    Log.e("test", "Error connecting to Places API", e);
 //                }
 //            }
-            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=42.656669,23.345751&radius=30000&sensor=true&types=atm&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
+            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=42.656669,23.345751&radius=2000&sensor=true&types=atm&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
 
             try {
                 URL url = new URL(request);
@@ -233,7 +234,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                 if (jsonObject.has("results")) {
                     JSONArray jsonArray = jsonObject.getJSONArray("results");
                     for (int i = 0; i < jsonArray.length(); i++) {
+                        //get lat & lng
+                        JSONObject temp = jsonArray.getJSONObject(i).getJSONObject("geometry").getJSONObject("location");
+                        double lat = temp.getDouble("lat");
+                        double lng = temp.getDouble("lng");
+                        LatLng latLng = new LatLng(lat, lng);
                         tonchev.yourplace.modul.Place poi = new tonchev.yourplace.modul.Place();
+                        poi.setLatLng(latLng);
                         if (jsonArray.getJSONObject(i).has("name")) {
                             poi.setName(jsonArray.getJSONObject(i).optString("name"));
                             poi.setRating(jsonArray.getJSONObject(i).optString("rating", " "));
@@ -366,7 +373,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 //            }
             Log.d("test", "Size" + returnedPlaces.size());
             for (int i = 0; i < returnedPlaces.size(); i++) {
+                tonchev.yourplace.modul.Place temp = returnedPlaces.get(i);
                 Log.d("resplac", returnedPlaces.get(i).getName() + " open now: " + returnedPlaces.get(i).getOpenNow() + " rating: " + returnedPlaces.get(i).getRating());
+                Marker newPlace = mMap.addMarker(new MarkerOptions()
+                        .position(temp.getLatLng())
+                        .title(temp.getName())
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                        .alpha(0.7f)
+                        .flat(true));
             }
         }
     }
