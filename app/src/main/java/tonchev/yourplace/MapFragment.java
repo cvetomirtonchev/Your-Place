@@ -379,7 +379,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                         .position(temp.getLatLng())
                         .title(temp.getName())
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                        .alpha(0.7f)
+                        .alpha(0.4f)
                         .flat(true));
             }
         }
