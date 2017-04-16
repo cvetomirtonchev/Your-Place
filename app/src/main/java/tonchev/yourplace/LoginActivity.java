@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -87,7 +88,9 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
             Intent intent = new Intent(LoginActivity.this,ChoseActivity.class);
             startActivity(intent);
         } else {
+            Toast.makeText(this, "Login failed!"+result, Toast.LENGTH_LONG).show();
             Toast.makeText(this, "Login failed!", Toast.LENGTH_SHORT).show();
+
         }
     }
 

@@ -2,16 +2,44 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
 
     tools:context="tonchev.yourplace.MapFragment">
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/map_list_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:visibility="gone">
 
-<com.google.android.gms.maps.MapView
-    android:id="@+id/map_view"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    </android.support.v7.widget.RecyclerView>
+    <com.google.android.gms.maps.MapView
+        android:id="@+id/map_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="8"
+        android:visibility="visible">
+
+    </com.google.android.gms.maps.MapView>
 
 
+    <Button
+        android:id="@+id/button_generate_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="bottom"
+        android:text="Generate list with places"
+        android:visibility="visible" />
 
-</com.google.android.gms.maps.MapView>
+    <Button
+        android:id="@+id/button_back_to_map"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_gravity="bottom"
+        android:text="Back to map"
+        android:visibility="gone" />
+
 
 </LinearLayout>

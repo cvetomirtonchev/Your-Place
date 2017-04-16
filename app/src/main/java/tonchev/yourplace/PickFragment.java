@@ -2,10 +2,14 @@ package tonchev.yourplace;
 
 
 import android.os.Bundle;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
@@ -13,6 +17,8 @@ import com.github.mikephil.charting.data.PieData;
 import com.github.mikephil.charting.data.PieDataSet;
 import com.github.mikephil.charting.data.PieEntry;
 import com.github.mikephil.charting.formatter.ValueFormatter;
+import com.github.mikephil.charting.highlight.Highlight;
+import com.github.mikephil.charting.listener.OnChartValueSelectedListener;
 import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.text.DecimalFormat;
@@ -24,9 +30,11 @@ import java.util.ArrayList;
  */
 public class PickFragment extends Fragment {
 
+
     private PieChart chart;
     private float[]yData ={10.5f,10.5f,10.5f,10.5f,10.5f};
     private String[]xData ={"BARS","ATMS","CASINOS","HOTELS","CLUBS"};
+    private String seleceted ;
 
 
     @Override
@@ -38,12 +46,54 @@ public class PickFragment extends Fragment {
         chart.setHoleRadius(25f);
         chart.setTransparentCircleAlpha(10);
         chart.animateY(1000);
+        chart.setClickable(true);
+        chart.setOnChartValueSelectedListener(new OnChartValueSelectedListener() {
+            @Override
+            public void onValueSelected(Entry e, Highlight h) {
+               int x = (int) h.getX();
+
+                switch (x){
+                    case 0:
+                        seleceted="bar";
+
+
+                        break;
+                    case 1:
+                        seleceted="atm";
+                        Toast.makeText(getActivity(), seleceted, Toast.LENGTH_SHORT).show();
+                        break;
+                    case 2:
+                        seleceted="casino";
+                        Toast.makeText(getActivity(), seleceted, Toast.LENGTH_SHORT).show();
+                        break;
+                    case 3:
+                        seleceted="hotel";
+                        Toast.makeText(getActivity(), seleceted, Toast.LENGTH_SHORT).show();
+                        break;
+                    case 4:
+                        seleceted="club";
+                        Toast.makeText(getActivity(), seleceted, Toast.LENGTH_SHORT).show();
+                        break;
+                }
+                ChoseActivity.selection = seleceted;
+                Toast.makeText(getActivity(), seleceted, Toast.LENGTH_SHORT).show();
+                TabLayout.Tab tab =  ChoseActivity.nTabLayout.getTabAt(1);
+                tab.select();
+            }
+
+            @Override
+            public void onNothingSelected() {
+
+            }
+        });
+
 
 
         //chart.setCenterText("");
         //chart.setCenterTextSize(10);
        // chart.setDrawEntryLabels(true);
         addDataSet();
+
 
         return root;
     }

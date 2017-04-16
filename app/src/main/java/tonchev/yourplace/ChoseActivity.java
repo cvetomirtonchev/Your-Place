@@ -38,7 +38,8 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
     private DrawerLayout nDrawerLayoun;
     private ActionBarDrawerToggle mTogle;
     private Toolbar nToolBar;
-    private TabLayout nTabLayout;
+    public static TabLayout nTabLayout;
+    public static String selection ;
     private EditText searchField;
 
     PlaceAutocompleteFragment searchBar;
@@ -129,8 +130,6 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
                 String rating = String.valueOf(place.getRating());
                 String phone = place.getPhoneNumber().toString();
                 String webAdress = place.getWebsiteUri().toString();
-
-
 
                 tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(id,name,address,rating,phone,webAdress);
                 intent.putExtra("mqsto", mqsto);
