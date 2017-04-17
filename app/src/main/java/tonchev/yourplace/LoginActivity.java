@@ -172,6 +172,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                 mGoogleApiClient);
         if (mLastLocation != null) {
             location = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            Toast.makeText(this, "" + location.latitude + "," + location.longitude, Toast.LENGTH_SHORT).show();
         }
     }
 

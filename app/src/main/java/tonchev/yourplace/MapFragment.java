@@ -99,12 +99,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 
             }
         });
-
-
         return root;
     }
-
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -150,7 +146,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     public void onLocationChanged(Location location) {
         Log.v("MyMapActivity", "location changed");
         Log.v("Test", "location change block");
-        updatePlaces();
+//        updatePlaces();
     }
 
     @Override
@@ -168,36 +164,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         Log.v("MyMapActivity", "provider disabled");
     }
 
-    private void updatePlaces() {
-        //get location manager
-        //get last location
-        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        Location lastLoc = locMan.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        double lat = lastLoc.getLatitude();
-        double lng = lastLoc.getLongitude();
-        //create LatLng
-        LatLng lastLatLng = new LatLng(lat, lng);
-
-        //remove any existing marker
-        if (userMarker != null) userMarker.remove();
-        //create and set marker properties
-        userMarker = mMap.addMarker(new MarkerOptions()
-                .position(lastLatLng)
-                .title("You are here")
-                .snippet("Your last recorded location"));
-        //move to location
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(lastLatLng), 3000, null);
-
-    }
+//    private void updatePlaces() {
+//        //get location manager
+//        //get last location
+//        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return;
+//        }
+//        Location lastLoc = locMan.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+//        double lat = lastLoc.getLatitude();
+//        double lng = lastLoc.getLongitude();
+//        //create LatLng
+//        LatLng lastLatLng = new LatLng(lat, lng);
+//
+//        //remove any existing marker
+//        if (userMarker != null) userMarker.remove();
+//        //create and set marker properties
+//        userMarker = mMap.addMarker(new MarkerOptions()
+//                .position(lastLatLng)
+//                .title("You are here")
+//                .snippet("Your last recorded location"));
+//        //move to location
+//        mMap.animateCamera(CameraUpdateFactory.newLatLng(lastLatLng), 3000, null);
+//
+//    }
 
     private class GetPlaces extends AsyncTask<Void, Void, ArrayList<tonchev.yourplace.modul.Place>> {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -245,7 +241,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 //                    Log.e("test", "Error connecting to Places API", e);
 //                }
 //            }
-            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=42.656669,23.345751&radius=2000&sensor=true&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
+            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+location.latitude + "," + location.longitude+"&radius=2000&sensor=true&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
+//            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?units=imperial&origins="+location.latitude + "," + location.longitude+"&radius=2000&sensor=true&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
 
             try {
                 URL url = new URL(request);
