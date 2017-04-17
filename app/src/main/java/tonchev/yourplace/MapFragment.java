@@ -413,27 +413,27 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     private class GetDistance extends AsyncTask <Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
-            String destinationRequest;
+            String distanceRequest;
             LatLng placeLatLng;
             for (int i = 0; i < returnedPlaces.size(); i ++) {
                 placeLatLng = returnedPlaces.get(i).getLatLng();
-                destinationRequest = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins="+location.latitude+","+location.longitude+"&destinations="+placeLatLng.latitude+"%2C"+placeLatLng.longitude+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";
+                distanceRequest = "https://maps.googleapis.com/maps/api/distancematrix/json?origins="+location.latitude+","+location.longitude+"&destinations="+placeLatLng.latitude+"%2C"+placeLatLng.longitude+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";
                 try {
-                    URL url2 = new URL(destinationRequest);
+                    URL url2 = new URL(distanceRequest);
                     HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
                     connection2.setRequestMethod("GET");
                     Scanner sc2 = new Scanner(connection2.getInputStream());
-                    StringBuilder responseDest = new StringBuilder();
+                    StringBuilder responseDist = new StringBuilder();
 
                     while (sc2.hasNextLine()) {
-                        responseDest.append(sc2.nextLine());
+                        responseDist.append(sc2.nextLine());
                     }
-                    JSONObject jsonObject = new JSONObject(responseDest.toString());
-                    Log.d("testdi", responseDest.toString());
-                    String calcDistance = jsonObject.getJSONObject("rows").getJSONObject("elements").getJSONObject("distance").get("text").toString();
-                    Log.d("calcal", "" + calcDistance);
+                    JSONObject jsonObject2 = new JSONObject(responseDist.toString());
+                    Log.d("testdi", jsonObject2.toString());
+                    String calcDistance = jsonObject2.getJSONObject("rows").getJSONObject("elements").getJSONObject("distance").getString("text");
+                    Log.d("calcal", "" + jsonObject2.getJSONObject("rows").toString());
                     returnedPlaces.get(i).setDistance(calcDistance);
-                    responseDest.delete(0,responseDest.length());
+                    responseDist.delete(0,responseDist.length());
 
                 } catch (ProtocolException e) {
                     e.printStackTrace();
