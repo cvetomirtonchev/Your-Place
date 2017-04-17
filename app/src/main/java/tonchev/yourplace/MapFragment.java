@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -19,8 +20,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -42,39 +44,30 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import static tonchev.yourplace.ChoseActivity.location;
+
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback, LocationListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback, LocationListener,  GoogleApiClient.OnConnectionFailedListener {
 
     private static final int MAX_PLACES = 20;
     private GoogleMap mMap;
     private MapView mapView;
     private LocationManager locMan;
-    private Marker[] placeMarkers;
     private Marker userMarker;
-    private boolean updateFinished;
-    private MarkerOptions[] places;
-    private int otherIcon;
-    private int foodIcon;
-    private LatLng location;
-    private ArrayList<tonchev.yourplace.modul.Place> returnedPlaces ;
+    private ArrayList<tonchev.yourplace.modul.Place> returnedPlaces;
     private Button generateList;
     private Button backToMap;
     private RecyclerView recyclerView;
 
-    interface ComunicatorFragment{
-        void searchResult(Place place);
-    }
+
 
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_map, container, false);
-//        SupportMapFragment mapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager()
-//                .findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
         generateList = (Button) root.findViewById(R.id.button_generate_list);
         backToMap = (Button) root.findViewById(R.id.button_back_to_map);
         mapView = (MapView) root.findViewById(R.id.map_view);
@@ -84,9 +77,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         returnedPlaces = new ArrayList<>();
         recyclerView = (RecyclerView) root.findViewById(R.id.map_list_view);
         final PlaceListAdapter adapter = new PlaceListAdapter(getActivity(),returnedPlaces);
-
-        foodIcon = R.mipmap.ic_place_black_24dp;
-        otherIcon = R.mipmap.ic_place_black_24dp;
 
         generateList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -119,7 +109,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        location = new LatLng(42.656669,23.345751);
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -132,19 +121,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         }
 
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        //create marker array
-        placeMarkers = new Marker[MAX_PLACES];
 //        update location
         locMan = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-        locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30000, 100, (LocationListener) this);
+        locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 100, (LocationListener) this);
         mMap.setMyLocationEnabled(true);
-        mMap.addMarker(new MarkerOptions().position(location).title("My new Location"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(42.656669, 23.345751), 15));
+          if (location!=null) {
+            mMap.addMarker(new MarkerOptions().position(location).title("You are here"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
+          }
         if(ChoseActivity.selection!=null) {
             returnedPlaces.clear();
             new MapFragment.GetPlaces().execute();
 
         }
+    }
+
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    interface ComunicatorFragment{
+        void searchResult(Place place);
     }
 
     @Override
@@ -182,7 +181,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
             // for ActivityCompat#requestPermissions for more details.
             return;
         }
-        Location lastLoc = locMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location lastLoc = locMan.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         double lat = lastLoc.getLatitude();
         double lng = lastLoc.getLongitude();
         //create LatLng
@@ -198,12 +197,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         //move to location
         mMap.animateCamera(CameraUpdateFactory.newLatLng(lastLatLng), 3000, null);
 
-        //build places query string
-
-        //execute query
-
-
-        Toast.makeText(getActivity(), "size" + returnedPlaces.size(), Toast.LENGTH_SHORT).show();
     }
 
     private class GetPlaces extends AsyncTask<Void, Void, ArrayList<tonchev.yourplace.modul.Place>> {
@@ -313,9 +306,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 
             return returnedPlaces;
         }
-
-
-
         //process data retrieved from doInBackground
         protected void onPostExecute(ArrayList<tonchev.yourplace.modul.Place> returnedPlaces) {
 //            //parse place data returned from Google Places
