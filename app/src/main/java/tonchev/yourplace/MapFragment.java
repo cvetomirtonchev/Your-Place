@@ -40,6 +40,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -242,8 +243,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 //                }
 //            }
             String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+location.latitude + "," + location.longitude+"&radius=2000&sensor=true&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
-//            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?units=imperial&origins="+location.latitude + "," + location.longitude+"&radius=2000&sensor=true&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
-
+//
             try {
                 URL url = new URL(request);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -405,6 +405,54 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
                         .alpha(0.4f)
                         .flat(true));
+            }
+            new GetDistance().execute();
+        }
+    }
+
+    private class GetDistance extends AsyncTask <Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            String destinationRequest;
+            LatLng placeLatLng;
+            for (int i = 0; i < returnedPlaces.size(); i ++) {
+                placeLatLng = returnedPlaces.get(i).getLatLng();
+                destinationRequest = "https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins="+location.latitude+","+location.longitude+"&destinations="+placeLatLng.latitude+"%2C"+placeLatLng.longitude+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";
+                try {
+                    URL url2 = new URL(destinationRequest);
+                    HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
+                    connection2.setRequestMethod("GET");
+                    Scanner sc2 = new Scanner(connection2.getInputStream());
+                    StringBuilder responseDest = new StringBuilder();
+
+                    while (sc2.hasNextLine()) {
+                        responseDest.append(sc2.nextLine());
+                    }
+                    JSONObject jsonObject = new JSONObject(responseDest.toString());
+                    Log.d("testdi", responseDest.toString());
+                    String calcDistance = jsonObject.getJSONObject("rows").getJSONObject("elements").getJSONObject("distance").get("text").toString();
+                    Log.d("calcal", "" + calcDistance);
+                    returnedPlaces.get(i).setDistance(calcDistance);
+                    responseDest.delete(0,responseDest.length());
+
+                } catch (ProtocolException e) {
+                    e.printStackTrace();
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            for (tonchev.yourplace.modul.Place place : returnedPlaces) {
+                Log.d("distanceTest", place.getName() + " " + place.getDistance());
             }
         }
     }
