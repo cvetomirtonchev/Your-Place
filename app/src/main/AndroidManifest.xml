@@ -35,7 +35,6 @@
 
         <!--AIzaSyAzRf0XksuGGVPnRq0AKkk9xK_koJ-znoM-->
 
-        <activity android:name=".OpitActivity" />
         <activity android:name=".PlaceActivity" />
     </application>
 

@@ -1,9 +1,10 @@
 package tonchev.yourplace;
 
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
+import android.support.design.widget.NavigationView.OnNavigationItemSelectedListener;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.GravityCompat;
@@ -15,32 +16,31 @@ import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.EditText;
-import android.widget.RatingBar;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
-import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.places.AutocompleteFilter;
-import com.google.android.gms.location.places.GeoDataApi;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.location.places.ui.PlaceAutocompleteFragment;
 import com.google.android.gms.location.places.ui.PlaceSelectionListener;
 import com.google.android.gms.maps.model.LatLng;
 
+import tonchev.yourplace.MapFragment.ComunicatorFragment;
+
+import static com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import static tonchev.yourplace.LoginActivity.mGoogleApiClient;
 
-public class ChoseActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener,MapFragment.ComunicatorFragment {
+public class ChoseActivity extends AppCompatActivity implements OnNavigationItemSelectedListener, ComunicatorFragment, OnConnectionFailedListener {
 
     private DrawerLayout nDrawerLayoun;
     private ActionBarDrawerToggle mTogle;
     private Toolbar nToolBar;
     public static TabLayout nTabLayout;
-    public static String selection ;
-    private EditText searchField;
+    public static String selection;
+    public static LatLng location;
 
     PlaceAutocompleteFragment searchBar;
     Place searchedPlace;
@@ -77,12 +77,10 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
         nTabLayout.addTab(nTabLayout.newTab().setText("Map"));
         TabLayout.Tab tab = nTabLayout.getTabAt(0);
         tab.select();
-        // search Field
-       // searchField = (EditText) findViewById(R.id.search_field);
         final PickFragment chartFragment = new PickFragment();
         final MapFragment mapFragment = new MapFragment();
         final FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction().add(R.id.picker_layout, chartFragment,"Pick").commit();
+        fragmentManager.beginTransaction().add(R.id.picker_layout, chartFragment, "Pick").commit();
 
 
         nTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
@@ -90,11 +88,11 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
             public void onTabSelected(TabLayout.Tab tab) {
                 if (tab.getText().equals("Map")) {
                     fragmentManager.beginTransaction().remove(chartFragment).commit();
-                    fragmentManager.beginTransaction().add(R.id.picker_layout, mapFragment,"Map").commit();
+                    fragmentManager.beginTransaction().add(R.id.picker_layout, mapFragment, "Map").commit();
                 }
                 if (tab.getText().equals("Pick")) {
                     fragmentManager.beginTransaction().remove(mapFragment).commit();
-                    fragmentManager.beginTransaction().add(R.id.picker_layout, chartFragment,"Pick").commit();
+                    fragmentManager.beginTransaction().add(R.id.picker_layout, chartFragment, "Pick").commit();
                 }
             }
 
@@ -131,15 +129,14 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
                 String phone = place.getPhoneNumber().toString();
                 String webAdress = place.getWebsiteUri().toString();
 
-                tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(id,name,address,rating,phone,webAdress);
+                tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(id, name, address, rating, phone, webAdress);
                 intent.putExtra("mqsto", mqsto);
-                intent.putExtra("ID",place.getId());
+                intent.putExtra("ID", place.getId());
                 startActivity(intent);
 
 
-
-               // Toast.makeText(ChoseActivity.this,""+place,Toast.LENGTH_LONG).show();
-                      Log.d("ceko ",""+place);
+                // Toast.makeText(ChoseActivity.this,""+place,Toast.LENGTH_LONG).show();
+                Log.d("ceko ", "" + place);
 
 //                tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(place.getName().toString());
 //                intent.putExtra("mqsto", mqsto);
@@ -160,7 +157,6 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
     }
 
 
-
 //    @Override
 //    public boolean onCreateOptionsMenu(Menu menu) {
 //        getMenuInflater().inflate(R.menu.navigation_menu,menu);
@@ -169,10 +165,9 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
 
     @Override
     public void onBackPressed() {
-        if(nDrawerLayoun.isDrawerOpen(GravityCompat.START)){
+        if (nDrawerLayoun.isDrawerOpen(GravityCompat.START)) {
             nDrawerLayoun.closeDrawer(GravityCompat.START);
-        }
-        else{
+        } else {
             super.onBackPressed();
         }
     }
@@ -200,17 +195,16 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if( id == R.id.nav_my_places){
+        if (id == R.id.nav_my_places) {
 
-        }
-        else if( id == R.id.nav_logout){
+        } else if (id == R.id.nav_logout) {
             Auth.GoogleSignInApi.signOut(mGoogleApiClient).setResultCallback(
                     new ResultCallback<Status>() {
                         @Override
                         public void onResult(Status status) {
                             // ...
-                            Toast.makeText(getApplicationContext(),"Logged Out",Toast.LENGTH_SHORT).show();
-                            Intent i=new Intent(getApplicationContext(),LoginActivity.class);
+                            Toast.makeText(getApplicationContext(), "Logged Out", Toast.LENGTH_SHORT).show();
+                            Intent i = new Intent(getApplicationContext(), LoginActivity.class);
                             startActivity(i);
                         }
                     });
@@ -221,19 +215,19 @@ public class ChoseActivity extends AppCompatActivity implements NavigationView.O
     }
 
     @Override
-    protected void onStart() {
-        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-                .requestEmail()
-                .build();
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addApi(Auth.GOOGLE_SIGN_IN_API, gso)
-                .build();
-        mGoogleApiClient.connect();
-        super.onStart();
-    }
-
-    @Override
     public void searchResult(Place place) {
 
     }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    public void onStop() {
+        mGoogleApiClient.disconnect();
+        super.onStop();
+    }
+
 }

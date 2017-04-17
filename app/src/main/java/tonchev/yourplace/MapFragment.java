@@ -8,6 +8,7 @@ import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -19,8 +20,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
-import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
@@ -39,38 +41,37 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+
 import static android.content.Context.LOCATION_SERVICE;
+
+import static tonchev.yourplace.ChoseActivity.location;
+
 
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback, LocationListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback, LocationListener,  GoogleApiClient.OnConnectionFailedListener {
 
     private static final int MAX_PLACES = 20;
     private GoogleMap mMap;
     private MapView mapView;
     private LocationManager locMan;
-    private Marker[] placeMarkers;
     private Marker userMarker;
-    private boolean updateFinished;
-    private MarkerOptions[] places;
-    private int otherIcon;
-    private int foodIcon;
-    private LatLng location;
-    private ArrayList<tonchev.yourplace.modul.Place> returnedPlaces ;
+    private ArrayList<tonchev.yourplace.modul.Place> returnedPlaces;
     private Button generateList;
     private Button backToMap;
     private RecyclerView recyclerView;
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_map, container, false);
+
 //        SupportMapFragment mapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager()
 //                .findFragmentById(R.id.map);
 //        mapFragment.getMapAsync(this);
@@ -85,9 +86,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         returnedPlaces = new ArrayList<>();
         recyclerView = (RecyclerView) root.findViewById(R.id.map_list_view);
         final PlaceListAdapter adapter = new PlaceListAdapter(getActivity(),returnedPlaces);
-
-        foodIcon = R.mipmap.ic_place_black_24dp;
-        otherIcon = R.mipmap.ic_place_black_24dp;
 
         generateList.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -110,19 +108,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 
             }
         });
-
-
         return root;
     }
-
-
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        location = new LatLng(42.656669,23.345751);
         if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling
             //    ActivityCompat#requestPermissions
@@ -135,14 +127,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         }
 
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        //create marker array
-        placeMarkers = new Marker[MAX_PLACES];
 //        update location
+
         locMan = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30000, 100, (LocationListener) this);
+
+        locMan = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 100, (LocationListener) this);
+
         mMap.setMyLocationEnabled(true);
-        mMap.addMarker(new MarkerOptions().position(location).title("My new Location"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(42.656669, 23.345751), 15));
+          if (location!=null) {
+            mMap.addMarker(new MarkerOptions().position(location).title("You are here"));
+            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
+          }
         if(ChoseActivity.selection!=null) {
             returnedPlaces.clear();
             new MapFragment.GetPlaces().execute();
@@ -150,11 +147,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         }
     }
 
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    interface ComunicatorFragment{
+        void searchResult(Place place);
+    }
+
     @Override
     public void onLocationChanged(Location location) {
         Log.v("MyMapActivity", "location changed");
         Log.v("Test", "location change block");
-        updatePlaces();
+//        updatePlaces();
     }
 
     @Override
@@ -172,42 +179,36 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         Log.v("MyMapActivity", "provider disabled");
     }
 
-    private void updatePlaces() {
-        //get location manager
-        //get last location
-        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            return;
-        }
-        Location lastLoc = locMan.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        double lat = lastLoc.getLatitude();
-        double lng = lastLoc.getLongitude();
-        //create LatLng
-        LatLng lastLatLng = new LatLng(lat, lng);
-
-        //remove any existing marker
-        if (userMarker != null) userMarker.remove();
-        //create and set marker properties
-        userMarker = mMap.addMarker(new MarkerOptions()
-                .position(lastLatLng)
-                .title("You are here")
-                .snippet("Your last recorded location"));
-        //move to location
-        mMap.animateCamera(CameraUpdateFactory.newLatLng(lastLatLng), 3000, null);
-
-        //build places query string
-
-        //execute query
-
-
-        Toast.makeText(getActivity(), "size" + returnedPlaces.size(), Toast.LENGTH_SHORT).show();
-    }
+//    private void updatePlaces() {
+//        //get location manager
+//        //get last location
+//        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+//            // TODO: Consider calling
+//            //    ActivityCompat#requestPermissions
+//            // here to request the missing permissions, and then overriding
+//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+//            //                                          int[] grantResults)
+//            // to handle the case where the user grants the permission. See the documentation
+//            // for ActivityCompat#requestPermissions for more details.
+//            return;
+//        }
+//        Location lastLoc = locMan.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+//        double lat = lastLoc.getLatitude();
+//        double lng = lastLoc.getLongitude();
+//        //create LatLng
+//        LatLng lastLatLng = new LatLng(lat, lng);
+//
+//        //remove any existing marker
+//        if (userMarker != null) userMarker.remove();
+//        //create and set marker properties
+//        userMarker = mMap.addMarker(new MarkerOptions()
+//                .position(lastLatLng)
+//                .title("You are here")
+//                .snippet("Your last recorded location"));
+//        //move to location
+//        mMap.animateCamera(CameraUpdateFactory.newLatLng(lastLatLng), 3000, null);
+//
+//    }
 
     private class GetPlaces extends AsyncTask<Void, Void, ArrayList<tonchev.yourplace.modul.Place>> {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -255,8 +256,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 //                    Log.e("test", "Error connecting to Places API", e);
 //                }
 //            }
-            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location=42.656669,23.345751&radius=2000&sensor=true&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
-
+            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+location.latitude + "," + location.longitude+"&radius=2000&sensor=true&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
+//
             try {
                 URL url = new URL(request);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -316,9 +317,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 
             return returnedPlaces;
         }
-
-
-
         //process data retrieved from doInBackground
         protected void onPostExecute(ArrayList<tonchev.yourplace.modul.Place> returnedPlaces) {
 //            //parse place data returned from Google Places
@@ -419,8 +417,56 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                         .position(temp.getLatLng())
                         .title(temp.getName())
                         .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                        .alpha(0.7f)
+                        .alpha(0.4f)
                         .flat(true));
+            }
+            new GetDistance().execute();
+        }
+    }
+
+    private class GetDistance extends AsyncTask <Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            String distanceRequest;
+            LatLng placeLatLng;
+            for (int i = 0; i < returnedPlaces.size(); i ++) {
+                placeLatLng = returnedPlaces.get(i).getLatLng();
+                distanceRequest = "https://maps.googleapis.com/maps/api/distancematrix/json?origins="+location.latitude+","+location.longitude+"&destinations="+placeLatLng.latitude+"%2C"+placeLatLng.longitude+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";
+                try {
+                    URL url2 = new URL(distanceRequest);
+                    HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
+                    connection2.setRequestMethod("GET");
+                    Scanner sc2 = new Scanner(connection2.getInputStream());
+                    StringBuilder responseDist = new StringBuilder();
+
+                    while (sc2.hasNextLine()) {
+                        responseDist.append(sc2.nextLine());
+                    }
+                    JSONObject jsonObject2 = new JSONObject(responseDist.toString());
+                    Log.d("testdi", jsonObject2.toString());
+                    String calcDistance = jsonObject2.getJSONObject("rows").getJSONObject("elements").getJSONObject("distance").getString("text");
+                    Log.d("calcal", "" + jsonObject2.getJSONObject("rows").toString());
+                    returnedPlaces.get(i).setDistance(calcDistance);
+                    responseDist.delete(0,responseDist.length());
+
+                } catch (ProtocolException e) {
+                    e.printStackTrace();
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            for (tonchev.yourplace.modul.Place place : returnedPlaces) {
+                Log.d("distanceTest", place.getName() + " " + place.getDistance());
             }
         }
     }
