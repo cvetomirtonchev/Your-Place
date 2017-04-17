@@ -24,6 +24,7 @@ import android.widget.Toast;
 import com.google.android.gms.location.places.Place;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.LocationSource;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
@@ -41,6 +42,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Scanner;
+
+import static android.content.Context.LOCATION_SERVICE;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -63,10 +66,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     private Button backToMap;
     private RecyclerView recyclerView;
 
-    interface ComunicatorFragment{
-        void searchResult(Place place);
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -75,6 +74,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 //        SupportMapFragment mapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager()
 //                .findFragmentById(R.id.map);
 //        mapFragment.getMapAsync(this);
+
+
         generateList = (Button) root.findViewById(R.id.button_generate_list);
         backToMap = (Button) root.findViewById(R.id.button_back_to_map);
         mapView = (MapView) root.findViewById(R.id.map_view);
@@ -115,6 +116,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     }
 
 
+
+
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
@@ -135,7 +138,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         //create marker array
         placeMarkers = new Marker[MAX_PLACES];
 //        update location
-        locMan = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        locMan = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
         locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30000, 100, (LocationListener) this);
         mMap.setMyLocationEnabled(true);
         mMap.addMarker(new MarkerOptions().position(location).title("My new Location"));

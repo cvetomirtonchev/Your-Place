@@ -7,6 +7,7 @@ import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -38,7 +39,10 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
     public void onBindViewHolder(PlaceListAdapter.MyViewHolder holder, int position) {
         Place place = places.get(position);
         holder.name.setText(place.getName());
-        holder.rating.setText(place.getRating());
+        if(place.getRating()!=null) {
+            holder.rating.setText(place.getRating());
+            holder.ratingBar.setRating(Float.parseFloat(place.getRating()));
+        }
 
     }
 
@@ -51,6 +55,7 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
         View row;
         TextView name;
         TextView rating;
+        RatingBar ratingBar;
 
 
         MyViewHolder(View row){
@@ -58,6 +63,7 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
             this.row = row;
             name = (TextView) row.findViewById(R.id.list_name_text);
             rating = (TextView) row.findViewById(R.id.list_rating_text);
+            ratingBar = (RatingBar) row.findViewById(R.id.list_rating_bar);
 
         }
     }

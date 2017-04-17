@@ -6,4 +6,5 @@
     <color name="golden">#EFB509</color>
     <color name="bronze" > #CD7213</color>
     <color name="blue">#16253D</color>
+    <color name="blueTransperent">#d016253d</color>
 </resources>
