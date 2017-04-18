@@ -41,8 +41,14 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
         holder.name.setText(place.getName());
         if(place.getRating()!=null) {
             holder.rating.setText(place.getRating());
-            holder.ratingBar.setRating(Float.parseFloat(place.getRating()));
+
+
         }
+        try {
+            holder.ratingBar.setRating((float) Double.parseDouble(place.getRating()));
+        }
+        catch(NumberFormatException ex) {
+            holder.ratingBar.setRating(0.0f);        }
 
     }
 

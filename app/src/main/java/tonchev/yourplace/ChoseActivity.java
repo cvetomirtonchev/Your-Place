@@ -138,14 +138,10 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
                 // Toast.makeText(ChoseActivity.this,""+place,Toast.LENGTH_LONG).show();
                 Log.d("ceko ", "" + place);
 
-//                tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(place.getName().toString());
-//                intent.putExtra("mqsto", mqsto);
                 startActivity(intent);
 
                 LatLng coordinates = place.getLatLng();
 
-//                Toast.makeText(ChoseActivity.this,""+place,Toast.LENGTH_LONG).show();
-//                Log.d("ceko ",""+place);
 
             }
 
@@ -157,11 +153,6 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
     }
 
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.navigation_menu,menu);
-//        return true;
-//    }
 
     @Override
     public void onBackPressed() {
@@ -172,25 +163,6 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
         }
     }
 
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//        if(id == R.id.search_icon){
-//
-//            if(!searchField.getText().toString().equals("")) {
-//                item.setIcon(R.mipmap.ic_clear_black_24dp);
-//                item.setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
-//                    @Override
-//                    public boolean onMenuItemClick(MenuItem item) {
-//                        searchField.setText("");
-//                        item.setIcon(R.mipmap.ic_search_black_24dp);
-//                        return true;
-//                    }
-//                });
-//            }
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
 
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {

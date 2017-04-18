@@ -67,15 +67,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     private Button backToMap;
     private RecyclerView recyclerView;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View root = inflater.inflate(R.layout.fragment_map, container, false);
-
-//        SupportMapFragment mapFragment = (SupportMapFragment) getActivity().getSupportFragmentManager()
-//                .findFragmentById(R.id.map);
-//        mapFragment.getMapAsync(this);
-
 
         generateList = (Button) root.findViewById(R.id.button_generate_list);
         backToMap = (Button) root.findViewById(R.id.button_back_to_map);
@@ -214,50 +210,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         protected ArrayList<tonchev.yourplace.modul.Place> doInBackground(Void... params) {
-//            //fetch places
-//            updateFinished = false;
-//            StringBuilder placesBuilder = new StringBuilder();
-//            for (String placeSearchURL : placesURL) {
-//                try {
-//
-//                    URL requestUrl = new URL(placeSearchURL);
-//                    HttpURLConnection connection = (HttpURLConnection) requestUrl.openConnection();
-//                    connection.setRequestMethod("GET");
-//                    connection.connect();
-//                    int responseCode = connection.getResponseCode();
-//
-//                    if (responseCode == HttpURLConnection.HTTP_OK) {
-//
-//                        BufferedReader reader = null;
-//
-//                        InputStream inputStream = connection.getInputStream();
-//                        if (inputStream == null) {
-//                            return "";
-//                        }
-//                        reader = new BufferedReader(new InputStreamReader(inputStream));
-//
-//                        String line;
-//                        while ((line = reader.readLine()) != null) {
-//
-//                            placesBuilder.append(line + "\n");
-//                        }
-//
-//                        if (placesBuilder.length() == 0) {
-//                            return "";
-//                        }
-//
-//                        Log.d("test", placesBuilder.toString());
-//                    } else {
-//                        Log.i("test", "Unsuccessful HTTP Response Code: " + responseCode);
-//                    }
-//                } catch (MalformedURLException e) {
-//                    Log.e("test", "Error processing Places API URL", e);
-//                } catch (IOException e) {
-//                    Log.e("test", "Error connecting to Places API", e);
-//                }
-//            }
             String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+location.latitude + "," + location.longitude+"&radius=2000&sensor=true&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
-//
+
             try {
                 URL url = new URL(request);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -319,96 +273,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         }
         //process data retrieved from doInBackground
         protected void onPostExecute(ArrayList<tonchev.yourplace.modul.Place> returnedPlaces) {
-//            //parse place data returned from Google Places
-//            //remove existing markers
-//            if (placeMarkers != null) {
-//                for (int pm = 0; pm < placeMarkers.length; pm++) {
-//                    if (placeMarkers[pm] != null)
-//                        placeMarkers[pm].remove();
-//                }
-//            }
-//            try {
-//                //parse JSON
-//
-//                //create JSONObject, pass stinrg returned from doInBackground
-//                JSONObject resultObject = new JSONObject(result);
-//                //get "results" array
-//                JSONArray placesArray = resultObject.getJSONArray("results");
-//                //marker options for each place returned
-//                places = new MarkerOptions[placesArray.length()];
-//                //loop through places
-//
-//                Log.d("test", "The placesArray length is " + placesArray.length() + "...............");
-//
-//                for (int p = 0; p < placesArray.length(); p++) {
-//                    //parse each place
-//                    //if any values are missing we won't show the marker
-//                    boolean missingValue = false;
-//                    LatLng placeLL = null;
-//                    String placeName = "";
-//                    String vicinity = "";
-//                    int currIcon = otherIcon;
-//                    try {
-//                        //attempt to retrieve place data values
-//                        missingValue = false;
-//                        //get place at this index
-//                        JSONObject placeObject = placesArray.getJSONObject(p);
-//                        //get location section
-//                        JSONObject loc = placeObject.getJSONObject("geometry")
-//                                .getJSONObject("location");
-//                        //read lat lng
-//                        placeLL = new LatLng(Double.valueOf(loc.getString("lat")),
-//                                Double.valueOf(loc.getString("lng")));
-//                        //get types
-//                        JSONArray types = placeObject.getJSONArray("types");
-//                        //loop through types
-//                        for (int t = 0; t < types.length(); t++) {
-//                            //what type is it
-//                            String thisType = types.get(t).toString();
-//                            //check for particular types - set icons
-//                            if (thisType.contains("hospital")) {
-//                                currIcon = foodIcon;
-//                                break;
-//                            } else if (thisType.contains("health")) {
-//                                currIcon = foodIcon;
-//                                break;
-//                            } else if (thisType.contains("doctor")) {
-//                                currIcon = foodIcon;
-//                                break;
-//                            }
-//                        }
-//                        //vicinity
-//                        vicinity = placeObject.getString("vicinity");
-//                        //name
-//                        placeName = placeObject.getString("name");
-//                    } catch (JSONException jse) {
-//                        Log.v("PLACES", "missing value");
-//                        missingValue = true;
-//                        jse.printStackTrace();
-//                    }
-//                    //if values missing we don't display
-//                    if (missingValue) places[p] = null;
-//                    else
-//                        places[p] = new MarkerOptions()
-//                                .position(placeLL)
-//                                .title(placeName)
-//                                .snippet(vicinity);
-//                }
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//            if (places != null && placeMarkers != null) {
-//                Log.d("test", "The placeMarkers length is " + placeMarkers.length + "...............");
-//
-//                for (int p = 0; p < places.length && p < placeMarkers.length; p++) {
-//                    //will be null if a value was missing
-//
-//                    if (places[p] != null) {
-//
-//                        placeMarkers[p] = mMap.addMarker(places[p]);
-//                    }
-//                }
-//            }
+
             Log.d("test", "Size" + returnedPlaces.size());
             for (int i = 0; i < returnedPlaces.size(); i++) {
                 tonchev.yourplace.modul.Place temp = returnedPlaces.get(i);
@@ -442,12 +307,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                     while (sc2.hasNextLine()) {
                         responseDist.append(sc2.nextLine());
                     }
+                    // Get distance and time for obj
                     JSONObject jsonObject2 = new JSONObject(responseDist.toString());
+
+                    String object = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("distance").getString("text");
+
                     Log.d("testdi", jsonObject2.toString());
-                    String calcDistance = jsonObject2.getJSONObject("rows").getJSONObject("elements").getJSONObject("distance").getString("text");
-                    Log.d("calcal", "" + jsonObject2.getJSONObject("rows").toString());
-                    returnedPlaces.get(i).setDistance(calcDistance);
-                    responseDist.delete(0,responseDist.length());
+                    returnedPlaces.get(i).setDistance(object);
 
                 } catch (ProtocolException e) {
                     e.printStackTrace();
