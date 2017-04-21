@@ -128,19 +128,20 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
                 String rating = String.valueOf(place.getRating());
                 String phone = place.getPhoneNumber().toString();
                 String webAdress = place.getWebsiteUri().toString();
+                String coordinates = place.getLatLng().toString();
 
-                tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(id, name, address, rating, phone, webAdress);
+
+
+                tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(id, name, address, rating, phone, webAdress,coordinates);
                 intent.putExtra("mqsto", mqsto);
                 intent.putExtra("ID", place.getId());
                 startActivity(intent);
 
-
-                // Toast.makeText(ChoseActivity.this,""+place,Toast.LENGTH_LONG).show();
-                Log.d("ceko ", "" + place);
+                Log.d("ceko ", "" + coordinates);
 
                 startActivity(intent);
 
-                LatLng coordinates = place.getLatLng();
+
 
 
             }

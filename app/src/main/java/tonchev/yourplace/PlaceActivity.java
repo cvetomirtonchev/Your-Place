@@ -1,13 +1,18 @@
 package tonchev.yourplace;
 
 import android.content.Context;
+import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Html;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -29,8 +34,8 @@ import java.lang.ref.PhantomReference;
 import tonchev.yourplace.modul.Place;
 
 
-public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener{
-    private TextView name ;
+public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
+    private TextView name;
     private Place place;
     private TextView placeRating;
     private GoogleMap mMap;
@@ -40,22 +45,88 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
     private String placeID;
     private ResultCallback<PlacePhotoResult> mDisplayPhotoResultCallback;
     private RatingBar ratingBar;
+    private Button call;
+    private Button direction;
+    private Button webAdress;
+    private Button savePlace;
+    private TextView adress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place);
-        place = (Place) getIntent().getSerializableExtra("mqsto");
-        placeID = getIntent().getExtras().getString("ID");
 
+        call = (Button) findViewById(R.id.activity_place_call);
+        direction = (Button) findViewById(R.id.activity_place_direction_button);
+        webAdress = (Button) findViewById(R.id.activity_place_web);
+        savePlace = (Button) findViewById(R.id.activity_place_save);
         name = (TextView) findViewById(R.id.activity_place_name);
-        name.setText(place.getName());
         mapView = (MapView) findViewById(R.id.map_view);
         firstImage = (ImageView) findViewById(R.id.image_v);
         ratingBar = (RatingBar) findViewById(R.id.activity_place_rating);
-        ratingBar.setRating(Float.parseFloat(place.getRating()));
         placeRating = (TextView) findViewById(R.id.activity_place_rating_text);
-        placeRating.setText(place.getRating());
+        adress = (TextView) findViewById(R.id.activity_place_adress);
+
+        if (getIntent().getSerializableExtra("mqsto") != null) {
+            place = (Place) getIntent().getSerializableExtra("mqsto");
+            name.setText(place.getName());
+            ratingBar.setRating(Float.parseFloat(place.getRating()));
+            placeRating.setText(place.getRating());
+            adress.setText(place.getAdress());
+            call.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(place.getPhoneNumber()!=null) {
+                        String phone = place.getPhoneNumber();
+                        Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
+                        if (ActivityCompat.checkSelfPermission(PlaceActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                            // TODO: Consider calling
+                            //    ActivityCompat#requestPermissions
+                            // here to request the missing permissions, and then overriding
+                            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                            //                                          int[] grantResults)
+                            // to handle the case where the user grants the permission. See the documentation
+                            // for ActivityCompat#requestPermissions for more details.
+                            return;
+                        }
+                        startActivity(intent);
+                    }
+                    else {
+                        Toast.makeText(PlaceActivity.this, "Sorry, we don't have phone number.", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            });
+            webAdress.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    if(place.getWebAdress()!=null) {
+                        String url = place.getWebAdress();
+                        Intent i = new Intent(Intent.ACTION_VIEW);
+                        i.setData(Uri.parse(url));
+                        startActivity(i);
+                    }
+                    else {
+                        Toast.makeText(PlaceActivity.this, "Sorry, we don't have web page.", Toast.LENGTH_SHORT).show();
+                    }
+
+                }
+            });
+            direction.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                    Uri.parse("http://maps.google.com/maps?daddr="+place.getCoordinates()));
+                    startActivity(intent);
+                }
+            });
+
+       }
+        if (getIntent().getExtras().getString("ID")!= null){
+           placeID = getIntent().getExtras().getString("ID");
+       }
+
+
         mGoogleApiClient = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
@@ -66,6 +137,8 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
         if(placeID != null) {
             new PhotoAsyncTask().execute(placeID);
         }
+
+
     }
 
         class PhotoAsyncTask extends AsyncTask<String, Void, Void> {
