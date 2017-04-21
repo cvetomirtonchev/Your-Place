@@ -1,16 +1,13 @@
 package tonchev.yourplace;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
-import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -21,15 +18,13 @@ import android.widget.Toast;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.ResultCallback;
-import com.google.android.gms.location.places.PlacePhotoMetadata;
 import com.google.android.gms.location.places.PlacePhotoMetadataBuffer;
 import com.google.android.gms.location.places.PlacePhotoMetadataResult;
 import com.google.android.gms.location.places.PlacePhotoResult;
 import com.google.android.gms.location.places.Places;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
-
-import java.lang.ref.PhantomReference;
+import com.google.android.gms.maps.model.LatLng;
 
 import tonchev.yourplace.modul.Place;
 
@@ -115,9 +110,15 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
             direction.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                    Uri.parse("http://maps.google.com/maps?daddr="+place.getCoordinates()));
-                    startActivity(intent);
+                    if(getIntent().getExtras().getDoubleArray("LL")!= null) {
+                        double[] coord = getIntent().getExtras().getDoubleArray("LL");
+                        LatLng placeLatLng = new LatLng(coord[0],coord[1]);
+                        place.setLatLng(placeLatLng);
+                        Toast.makeText(PlaceActivity.this, "" + place.getLatLng(), Toast.LENGTH_SHORT).show();
+                        Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                Uri.parse("http://maps.google.com/maps?daddr=" + place.getLatLng().latitude+","+place.getLatLng().longitude));
+                        startActivity(intent);
+                    }
                 }
             });
 
@@ -141,7 +142,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
 
     }
 
-        class PhotoAsyncTask extends AsyncTask<String, Void, Void> {
+       private class PhotoAsyncTask extends AsyncTask<String, Void, Void> {
             @Override
             protected Void doInBackground(String... params) {
                 final String placeId = params[0];

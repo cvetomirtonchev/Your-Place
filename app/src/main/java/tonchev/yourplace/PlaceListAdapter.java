@@ -2,9 +2,7 @@ package tonchev.yourplace;
 
 import android.content.Context;
 import android.content.Intent;
-import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.util.AttributeSet;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,7 +47,9 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
             holder.ratingBar.setRating((float) Double.parseDouble(place.getRating()));
         }
         catch(NumberFormatException ex) {
-            holder.ratingBar.setRating(0.0f);        }
+            holder.ratingBar.setRating(0.0f);
+            holder.rating.setText("N/A");
+        }
 
         holder.name.setOnClickListener(new View.OnClickListener() {
             @Override

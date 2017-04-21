@@ -12,7 +12,6 @@ import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.MenuItem;
 import android.view.View;
@@ -128,22 +127,16 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
                 String rating = String.valueOf(place.getRating());
                 String phone = place.getPhoneNumber().toString();
                 String webAdress = place.getWebsiteUri().toString();
-                String coordinates = place.getLatLng().toString();
+                LatLng placeLatLng = place.getLatLng();
+                double[] ll = {placeLatLng.latitude, placeLatLng.longitude};
 
 
 
-                tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(id, name, address, rating, phone, webAdress,coordinates);
+                tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(id, name, address, rating, phone, webAdress);
                 intent.putExtra("mqsto", mqsto);
                 intent.putExtra("ID", place.getId());
+                intent.putExtra("LL",ll);
                 startActivity(intent);
-
-                Log.d("ceko ", "" + coordinates);
-
-                startActivity(intent);
-
-
-
-
             }
 
             @Override

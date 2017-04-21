@@ -89,8 +89,8 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                                 // All location settings are satisfied. The client can
                                 // initialize location requests here.
 
-                                mLocationRequest.setInterval(10000);
-                                mLocationRequest.setFastestInterval(5000);
+//                                mLocationRequest.setInterval(10000);
+//                                mLocationRequest.setFastestInterval(5000);
                                 mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
                                 startActivity(new Intent(LoginActivity.this,ChoseActivity.class));
                                 break;
