@@ -1,13 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical"
-
-
     app:titleTextColor="@color/golden"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:android="http://schemas.android.com/apk/res/android">
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_marginBottom="8dp">
 
 
     <android.support.v7.widget.CardView
@@ -33,7 +32,7 @@
     </android.support.v7.widget.CardView>
     <android.support.design.widget.TabLayout
         android:id="@+id/tab_layout"
-        android:background="@color/blue"
+        android:background="@color/midnightBlue"
         android:alpha="0.8"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

@@ -226,11 +226,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                 JSONObject jsonObject = new JSONObject(response.toString());
                 // make an jsonObject in order to parse the response
                 Log.d("test", response.toString());
+
                 if (jsonObject.has("results")) {
                     JSONArray jsonArray = jsonObject.getJSONArray("results");
+
                     for (int i = 0; i < jsonArray.length(); i++) {
                         //get lat & lng
                         JSONObject temp = jsonArray.getJSONObject(i).getJSONObject("geometry").getJSONObject("location");
+
                         double lat = temp.getDouble("lat");
                         double lng = temp.getDouble("lng");
                         LatLng latLng = new LatLng(lat, lng);
@@ -239,14 +242,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                         if (jsonArray.getJSONObject(i).has("name")) {
                             poi.setName(jsonArray.getJSONObject(i).optString("name"));
                             poi.setRating(jsonArray.getJSONObject(i).optString("rating", " "));
-                            if (jsonArray.getJSONObject(i).has("opening_hours")) {
-                                if (jsonArray.getJSONObject(i).getJSONObject("opening_hours").has("open_now")) {
-                                    if (jsonArray.getJSONObject(i).getJSONObject("opening_hours").getString("open_now").equals("true")) {
+                        }
+                        if (jsonArray.getJSONObject(i).has("opening_hours")) {
+                            if (jsonArray.getJSONObject(i).getJSONObject("opening_hours").has("open_now")) {
+                                if (jsonArray.getJSONObject(i).getJSONObject("opening_hours").getString("open_now").equals("true")) {
                                         poi.setOpenNow("YES");
                                     } else {
                                         poi.setOpenNow("NO");
                                     }
                                 }
+
                             } else {
                                 poi.setOpenNow("Not Known");
                             }
@@ -256,7 +261,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                                     poi.setCategory(typesArray.getString(j) + ", " + poi.getCategory());
                                 }
                             }
-                        }
+
                         returnedPlaces.add(poi);
 
                     }
@@ -310,10 +315,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                     // Get distance and time for obj
                     JSONObject jsonObject2 = new JSONObject(responseDist.toString());
 
-                    String object = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("distance").getString("text");
-
+                    String distanceKm = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("distance").getString("text");
+                    String distanceMinute =jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getString("text");
+                    String adress = jsonObject2.getJSONArray("destination_addresses").toString();
                     Log.d("testdi", jsonObject2.toString());
-                    returnedPlaces.get(i).setDistance(object);
+
+                    returnedPlaces.get(i).setDistance(distanceKm);
+                    returnedPlaces.get(i).setDistanceTime(distanceMinute);
+                    returnedPlaces.get(i).setAdress(adress);
 
                 } catch (ProtocolException e) {
                     e.printStackTrace();
@@ -332,6 +341,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         protected void onPostExecute(Void aVoid) {
             super.onPostExecute(aVoid);
             for (tonchev.yourplace.modul.Place place : returnedPlaces) {
+
                 Log.d("distanceTest", place.getName() + " " + place.getDistance());
             }
         }

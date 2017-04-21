@@ -10,29 +10,40 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"
-        android:visibility="gone">
+        android:visibility="gone"
+        android:layout_marginBottom="8dp"
+        android:layout_marginTop="8dp">
 
     </android.support.v7.widget.RecyclerView>
     <com.google.android.gms.maps.MapView
+        android:layout_marginTop="8dp"
         android:id="@+id/map_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="8"
-        android:visibility="visible">
+        android:visibility="visible"
+        android:layout_marginBottom="8dp">
 
     </com.google.android.gms.maps.MapView>
 
 
     <Button
         android:id="@+id/button_generate_list"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"
         android:layout_gravity="bottom"
+        android:background="@drawable/my_button"
         android:text="Generate list with places"
         android:visibility="visible" />
 
     <Button
+        android:textStyle="bold"
+        android:textColor="@android:color/white"
+        android:background="@drawable/my_button"
+
         android:id="@+id/button_back_to_map"
         android:layout_width="match_parent"
         android:layout_height="0dp"

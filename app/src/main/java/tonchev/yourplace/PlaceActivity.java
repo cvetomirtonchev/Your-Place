@@ -47,6 +47,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
         setContentView(R.layout.activity_place);
         place = (Place) getIntent().getSerializableExtra("mqsto");
         placeID = getIntent().getExtras().getString("ID");
+
         name = (TextView) findViewById(R.id.activity_place_name);
         name.setText(place.getName());
         mapView = (MapView) findViewById(R.id.map_view);
@@ -62,8 +63,9 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
                 .enableAutoManage(this, this)
                 .build();
 
-
-        new PhotoAsyncTask().execute(placeID);
+        if(placeID != null) {
+            new PhotoAsyncTask().execute(placeID);
+        }
     }
 
         class PhotoAsyncTask extends AsyncTask<String, Void, Void> {

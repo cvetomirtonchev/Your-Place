@@ -26,6 +26,7 @@ public class Place implements Comparable<Place>,Serializable {
     private String webAdress;
     private LatLng latLng;
     private String distance;
+    private String distanceTime;
 
 
 
@@ -59,6 +60,25 @@ public class Place implements Comparable<Place>,Serializable {
         return this.name.compareTo(o.name);
     }
 
+    public String getDistanceTime() {
+        return distanceTime;
+    }
+
+    public void setDistanceTime(String distanceTime) {
+        this.distanceTime = distanceTime;
+    }
+
+    public void setAdress(String adress) {
+        this.adress = adress;
+    }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public void setWebAdress(String webAdress) {
+        this.webAdress = webAdress;
+    }
 
     public String getName() {
         return name;

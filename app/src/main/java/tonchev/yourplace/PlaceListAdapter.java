@@ -1,6 +1,7 @@
 package tonchev.yourplace;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
@@ -39,16 +40,24 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
     public void onBindViewHolder(PlaceListAdapter.MyViewHolder holder, int position) {
         Place place = places.get(position);
         holder.name.setText(place.getName());
-        if(place.getRating()!=null) {
-            holder.rating.setText(place.getRating());
+        holder.rating.setText(place.getRating());
+        holder.distance.setText("Distance: "+place.getDistance() +" / "+place.getDistanceTime());
+        holder.adress.setText(place.getAdress());
 
 
-        }
         try {
             holder.ratingBar.setRating((float) Double.parseDouble(place.getRating()));
         }
         catch(NumberFormatException ex) {
             holder.ratingBar.setRating(0.0f);        }
+
+        holder.name.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(context,PlaceActivity.class);
+                context.startActivity(intent);
+            }
+        });
 
     }
 
@@ -62,6 +71,8 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
         TextView name;
         TextView rating;
         RatingBar ratingBar;
+        TextView distance;
+        TextView adress;
 
 
         MyViewHolder(View row){
@@ -70,6 +81,8 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
             name = (TextView) row.findViewById(R.id.list_name_text);
             rating = (TextView) row.findViewById(R.id.list_rating_text);
             ratingBar = (RatingBar) row.findViewById(R.id.list_rating_bar);
+            distance = (TextView) row.findViewById(R.id.list_distance_text);
+            adress = (TextView) row.findViewById(R.id.list_adress_text);
 
         }
     }

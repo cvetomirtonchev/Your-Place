@@ -102,7 +102,7 @@ public class PickFragment extends Fragment {
         // Kolko da e golqm teksta vutre
         pieDataSet.setValueTextColor(R.color.golden);
         pieDataSet.setValueTextSize(12);
-        pieDataSet.setColor(R.color.blue);
+        pieDataSet.setColor(R.color.blueTransperent);
         pieDataSet.setValueFormatter(new MyValueFormatter());
 
         PieData pieData = new PieData(pieDataSet);

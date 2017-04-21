@@ -5,6 +5,8 @@
     <color name="colorAccent">#EFB509</color>
     <color name="golden">#EFB509</color>
     <color name="bronze" > #CD7213</color>
-    <color name="blue">#16253D</color>
+    <color name="midnightBlue">#16253D</color>
     <color name="blueTransperent">#d016253d</color>
+    <color name="whiteTransperent">#d0ffffff</color>
+    <color name="goldenTransperent">#bfefb509</color>
 </resources>
