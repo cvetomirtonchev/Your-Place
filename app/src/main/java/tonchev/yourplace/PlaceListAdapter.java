@@ -35,12 +35,13 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
     }
 
     @Override
-    public void onBindViewHolder(PlaceListAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(final PlaceListAdapter.MyViewHolder holder, int position) {
         Place place = places.get(position);
         holder.name.setText(place.getName());
         holder.rating.setText(place.getRating());
         holder.distance.setText("Distance: "+place.getDistance() +" / "+place.getDistanceTime());
         holder.adress.setText(place.getAdress());
+
 
 
         try {
@@ -50,11 +51,23 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
             holder.ratingBar.setRating(0.0f);
             holder.rating.setText("N/A");
         }
-
-        holder.name.setOnClickListener(new View.OnClickListener() {
+        holder.row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context,PlaceActivity.class);
+                tonchev.yourplace.modul.Place temp = null;
+                String clickedName = holder.name.getText().toString();
+                for (tonchev.yourplace.modul.Place p : places) {
+                    if (clickedName.equals(p.getName())) {
+                        temp = p;
+                        break;
+                    }
+                }
+                Intent intent = new Intent(context, PlaceActivity.class );
+                double[] ll = {temp.getLatLng().latitude, temp.getLatLng().longitude};
+                temp.setLatLng(null);
+                intent.putExtra("mqsto", temp);
+                intent.putExtra("ID", temp.getId());
+                intent.putExtra("LL",ll);
                 context.startActivity(intent);
             }
         });

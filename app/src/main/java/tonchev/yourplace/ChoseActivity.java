@@ -113,8 +113,6 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
                 .setCountry("BG")
                 .setTypeFilter(21)
                 .build();
-
-
         searchBar.setFilter(typeFilter);
 
         searchBar.setOnPlaceSelectedListener(new PlaceSelectionListener() {
@@ -156,8 +154,6 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
             super.onBackPressed();
         }
     }
-
-
     @Override
     public boolean onNavigationItemSelected(MenuItem item) {
         int id = item.getItemId();

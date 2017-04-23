@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -81,13 +82,37 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         recyclerView = (RecyclerView) root.findViewById(R.id.map_list_view);
         final PlaceListAdapter adapter = new PlaceListAdapter(getActivity(),returnedPlaces);
 
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1, LinearLayoutManager.VERTICAL, false));
+
+        recyclerView.setOnClickListener (new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                tonchev.yourplace.modul.Place temp = null;
+                String clickedName = (String) ((TextView)v.findViewById(R.id.list_name_text)).getText();
+                for (tonchev.yourplace.modul.Place p : returnedPlaces) {
+                    if (clickedName.equals(p.getName())) {
+                        temp = p;
+                        break;
+                    }
+                }
+                Intent intent = new Intent(getActivity(), PlaceActivity.class );
+                double[] ll = {temp.getLatLng().latitude, temp.getLatLng().longitude};
+                temp.setLatLng(null);
+                intent.putExtra("mqsto", temp);
+                intent.putExtra("ID", temp.getId());
+                intent.putExtra("LL",ll);
+
+                startActivity(intent);
+
+            }
+        });
+
         generateList.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 generateList.setVisibility(View.GONE);
                 backToMap.setVisibility(View.VISIBLE);
-                recyclerView.setAdapter(adapter);
-                recyclerView.setLayoutManager(new GridLayoutManager(getActivity(), 1, LinearLayoutManager.VERTICAL, false));
                 mapView.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
             }
