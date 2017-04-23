@@ -383,6 +383,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                 if (jsonObject.has("result")) {
                     String phone = jsonObject.getJSONObject("result").optString("formatted_phone_number");
                     temp.setPhoneNumber(phone);
+                    String webAddress = jsonObject.getJSONObject("result").optString("website");
+                    temp.setWebAdress(webAddress);
                     Log.d("akostane", "phone: " + phone );
                 }
             } catch (MalformedURLException e) {
