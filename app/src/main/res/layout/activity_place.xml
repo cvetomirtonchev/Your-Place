@@ -21,8 +21,8 @@
                 android:background="@drawable/my_button"
                 android:id="@+id/place_activity_button_photo_back"
                 android:layout_width="match_parent"
-                android:text="<"
-                android:textSize="20sp"
+
+
                 android:layout_height="match_parent" />
         </LinearLayout>
         <LinearLayout
@@ -58,8 +58,8 @@
                 android:background="@drawable/my_button"
                 android:id="@+id/place_activity_button_photo_next"
                 android:layout_width="match_parent"
-                android:text=">"
-                android:textSize="20sp"
+
+
                 android:layout_height="match_parent" />
         </LinearLayout>
 
