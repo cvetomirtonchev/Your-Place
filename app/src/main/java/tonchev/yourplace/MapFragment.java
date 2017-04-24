@@ -165,7 +165,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
           mMap.setOnMarkerClickListener(this);
     }
 
-
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
@@ -173,6 +172,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 
     @Override
     public boolean onMarkerClick(Marker marker) {
+        if(marker.getTitle().equals("You are here")) {
+            return false;
+        }
         tonchev.yourplace.modul.Place temp = (tonchev.yourplace.modul.Place) marker.getTag();
         new GetDetails().execute(temp);
         return true;

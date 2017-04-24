@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 
 import tonchev.yourplace.modul.Place;
@@ -20,6 +22,8 @@ import tonchev.yourplace.modul.Place;
 public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyViewHolder> {
     private Context context;
     private ArrayList<Place> places;
+    tonchev.yourplace.modul.Place temp;
+    double[] ll = new double[2];
 
     public PlaceListAdapter(Context context, ArrayList<Place> places) {
         this.context = context;
@@ -54,7 +58,6 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
         holder.row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                tonchev.yourplace.modul.Place temp = null;
                 String clickedName = holder.name.getText().toString();
                 for (tonchev.yourplace.modul.Place p : places) {
                     if (clickedName.equals(p.getName())) {
@@ -63,7 +66,12 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
                     }
                 }
                 Intent intent = new Intent(context, PlaceActivity.class );
-                double[] ll = {temp.getLatLng().latitude, temp.getLatLng().longitude};
+                if (temp.getLatLng() == null) {
+                    LatLng ltLg = new LatLng(ll[0], ll[1]);
+                    temp.setLatLng(ltLg);
+                }
+                ll[0] = temp.getLatLng().latitude;
+                ll[1] = temp.getLatLng().longitude;
                 temp.setLatLng(null);
                 intent.putExtra("mqsto", temp);
                 intent.putExtra("ID", temp.getId());

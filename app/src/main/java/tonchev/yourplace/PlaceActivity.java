@@ -22,7 +22,6 @@ import com.google.android.gms.location.places.PlacePhotoMetadataBuffer;
 import com.google.android.gms.location.places.PlacePhotoMetadataResult;
 import com.google.android.gms.location.places.PlacePhotoResult;
 import com.google.android.gms.location.places.Places;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
 
@@ -33,7 +32,6 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
     private TextView name;
     private Place place;
     private TextView placeRating;
-    private GoogleMap mMap;
     private MapView mapView;
     private GoogleApiClient mGoogleApiClient2;
     private ImageView firstImage;
@@ -68,6 +66,11 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
             ratingBar.setRating(Float.parseFloat(place.getRating()));
             placeRating.setText(place.getRating());
             adress.setText(place.getAdress());
+            if(getIntent().getExtras().getDoubleArray("LL")!= null) {
+                double[] coord = getIntent().getExtras().getDoubleArray("LL");
+                LatLng placeLatLng = new LatLng(coord[0], coord[1]);
+                place.setLatLng(placeLatLng);
+            }
             call.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -111,9 +114,6 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
                 @Override
                 public void onClick(View v) {
                     if(getIntent().getExtras().getDoubleArray("LL")!= null) {
-                        double[] coord = getIntent().getExtras().getDoubleArray("LL");
-                        LatLng placeLatLng = new LatLng(coord[0],coord[1]);
-                        place.setLatLng(placeLatLng);
                         Toast.makeText(PlaceActivity.this, "" + place.getLatLng(), Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                                 Uri.parse("http://maps.google.com/maps?daddr=" + place.getLatLng().latitude+","+place.getLatLng().longitude));
