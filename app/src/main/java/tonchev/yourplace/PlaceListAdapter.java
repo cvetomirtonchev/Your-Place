@@ -45,6 +45,7 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
         holder.rating.setText(place.getRating());
         holder.distance.setText("Distance: "+place.getDistance() +" / "+place.getDistanceTime());
         holder.adress.setText(place.getAdress());
+        holder.isOpen.setText("Open now: " + place.getOpenNow());
 
 
 
@@ -94,6 +95,7 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
         RatingBar ratingBar;
         TextView distance;
         TextView adress;
+        TextView isOpen;
 
 
         MyViewHolder(View row){
@@ -104,6 +106,7 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
             ratingBar = (RatingBar) row.findViewById(R.id.list_rating_bar);
             distance = (TextView) row.findViewById(R.id.list_distance_text);
             adress = (TextView) row.findViewById(R.id.list_adress_text);
+            isOpen = (TextView) row.findViewById(R.id.list_open_text);
 
         }
     }

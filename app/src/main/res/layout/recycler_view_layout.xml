@@ -43,7 +43,8 @@
             android:text="Adress "/>
 
     </LinearLayout>
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/list_rating_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
@@ -60,8 +61,14 @@
             style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:isIndicator="true" />
-    </LinearLayout>
+            android:isIndicator="true"
+            android:layout_toRightOf="@+id/list_rating_text" />
+        <TextView
+            android:id="@+id/list_open_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
 
 
 

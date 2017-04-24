@@ -3,8 +3,35 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-
     tools:context="tonchev.yourplace.MapFragment">
+    <LinearLayout
+        android:id="@+id/map_sorting_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/sort_by_km"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="(km)"/>
+        <Button
+            android:id="@+id/sort_by_time"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="(minutes)"/>
+        <Button
+            android:id="@+id/sort_by_availability"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="(open now)"/>
+
+    </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/map_list_view"
         android:layout_width="match_parent"

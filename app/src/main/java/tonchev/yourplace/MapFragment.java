@@ -21,6 +21,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.google.android.gms.common.ConnectionResult;
@@ -45,6 +46,7 @@ import java.net.MalformedURLException;
 import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Scanner;
 
 import static android.content.Context.LOCATION_SERVICE;
@@ -63,6 +65,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     private Button generateList;
     private Button backToMap;
     private RecyclerView recyclerView;
+    private LinearLayout sortingLayout;
+    private Button sortKm;
+    private Button sortTime;
+    private Button sortOpen;
 
 
     @Override
@@ -72,6 +78,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 
         generateList = (Button) root.findViewById(R.id.button_generate_list);
         backToMap = (Button) root.findViewById(R.id.button_back_to_map);
+        sortingLayout = (LinearLayout) root.findViewById(R.id.map_sorting_buttons);
+        sortKm = (Button) root.findViewById(R.id.sort_by_km);
+        sortTime = (Button) root.findViewById(R.id.sort_by_time);
+        sortOpen = (Button) root.findViewById(R.id.sort_by_availability);
         mapView = (MapView) root.findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
@@ -111,6 +121,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
             public void onClick(View v) {
                 generateList.setVisibility(View.GONE);
                 backToMap.setVisibility(View.VISIBLE);
+                sortingLayout.setVisibility(View.VISIBLE);
                 mapView.setVisibility(View.GONE);
                 recyclerView.setVisibility(View.VISIBLE);
             }
@@ -119,14 +130,37 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
             @Override
             public void onClick(View v) {
                 backToMap.setVisibility(View.GONE);
+                sortingLayout.setVisibility(View.GONE);
                 generateList.setVisibility(View.VISIBLE);
                 recyclerView.setVisibility(View.GONE);
                 mapView.setVisibility(View.VISIBLE);
 
             }
         });
+        sortKm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Collections.sort(returnedPlaces, new CompareByKm());
+                recyclerView.setAdapter(adapter);
+            }
+        });
+        sortTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Collections.sort(returnedPlaces, new CompareByTime());
+                recyclerView.setAdapter(adapter);
+            }
+        });
+        sortOpen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Collections.sort(returnedPlaces);
+                recyclerView.setAdapter(adapter);
+            }
+        });
         return root;
     }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
@@ -355,13 +389,17 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                     JSONObject jsonObject2 = new JSONObject(responseDist.toString());
 
                     String distanceKm = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("distance").getString("text");
-                    String distanceMinute =jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getString("text");
+                    int distanceVal = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("distance").getInt("value");
+                    String distanceMinute = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getString("text");
+                    int timeVal = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getInt("value");
                     String adress = jsonObject2.getJSONArray("destination_addresses").toString();
                     Log.d("testdi", jsonObject2.toString());
 
                     returnedPlaces.get(i).setDistance(distanceKm);
                     returnedPlaces.get(i).setDistanceTime(distanceMinute);
                     returnedPlaces.get(i).setAdress(adress);
+                    returnedPlaces.get(i).setDistValue(distanceVal);
+                    returnedPlaces.get(i).setTimeValue(timeVal);
 
                 } catch (ProtocolException e) {
                     e.printStackTrace();
@@ -381,7 +419,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
             super.onPostExecute(aVoid);
             for (tonchev.yourplace.modul.Place place : returnedPlaces) {
 
-                Log.d("distanceTest", place.getName() + " " + place.getDistance() + "id:" + place.getId());
+                Log.d("distanceTest", place.getName() + " " + place.getDistance() + "id:" + place.getId() + " dist val:" + place.getDistValue() + " time val: " + place.getTimeValue() );
             }
         }
     }
