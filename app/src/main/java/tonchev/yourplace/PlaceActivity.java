@@ -22,20 +22,20 @@ import com.google.android.gms.location.places.PlacePhotoMetadataBuffer;
 import com.google.android.gms.location.places.PlacePhotoMetadataResult;
 import com.google.android.gms.location.places.PlacePhotoResult;
 import com.google.android.gms.location.places.Places;
-import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
 
 import tonchev.yourplace.modul.Place;
+
+import static tonchev.yourplace.LoginActivity.mGoogleApiClient;
 
 
 public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private TextView name;
     private Place place;
     private TextView placeRating;
-    private GoogleMap mMap;
     private MapView mapView;
-    private GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient mGoogleApiClient2;
     private ImageView firstImage;
     private String placeID;
     private ResultCallback<PlacePhotoResult> mDisplayPhotoResultCallback;
@@ -45,6 +45,14 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
     private Button webAdress;
     private Button savePlace;
     private TextView adress;
+    private static int counterPhotos = 0;
+    private ImageView secondImage;
+    private ImageView thirdImage;
+    private boolean isClicked1;
+    private boolean isClicked2;
+    private Button priviusButton;
+    private Button nextButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,10 +65,15 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
         savePlace = (Button) findViewById(R.id.activity_place_save);
         name = (TextView) findViewById(R.id.activity_place_name);
         mapView = (MapView) findViewById(R.id.map_view);
-        firstImage = (ImageView) findViewById(R.id.image_v);
+        firstImage = (ImageView) findViewById(R.id.image_v1);
         ratingBar = (RatingBar) findViewById(R.id.activity_place_rating);
         placeRating = (TextView) findViewById(R.id.activity_place_rating_text);
         adress = (TextView) findViewById(R.id.activity_place_adress);
+        secondImage = (ImageView) findViewById(R.id.image_v2);
+        thirdImage = (ImageView) findViewById(R.id.image_v3);
+        priviusButton = (Button) findViewById(R.id.place_activity_button_photo_back);
+        nextButton = (Button) findViewById(R.id.place_activity_button_photo_next);
+
 
         if (getIntent().getSerializableExtra("mqsto") != null) {
             place = (Place) getIntent().getSerializableExtra("mqsto");
@@ -68,6 +81,12 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
             ratingBar.setRating(Float.parseFloat(place.getRating()));
             placeRating.setText(place.getRating());
             adress.setText(place.getAdress());
+            if(getIntent().getExtras().getDoubleArray("LL")!= null) {
+                double[] coord = getIntent().getExtras().getDoubleArray("LL");
+                LatLng placeLatLng = new LatLng(coord[0], coord[1]);
+                place.setLatLng(placeLatLng);
+            }
+
             call.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
@@ -111,9 +130,6 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
                 @Override
                 public void onClick(View v) {
                     if(getIntent().getExtras().getDoubleArray("LL")!= null) {
-                        double[] coord = getIntent().getExtras().getDoubleArray("LL");
-                        LatLng placeLatLng = new LatLng(coord[0],coord[1]);
-                        place.setLatLng(placeLatLng);
                         Toast.makeText(PlaceActivity.this, "" + place.getLatLng(), Toast.LENGTH_SHORT).show();
                         Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
                                 Uri.parse("http://maps.google.com/maps?daddr=" + place.getLatLng().latitude+","+place.getLatLng().longitude));
@@ -128,7 +144,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
        }
 
 
-        mGoogleApiClient = new GoogleApiClient
+        mGoogleApiClient2 = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
@@ -138,6 +154,39 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
         if(placeID != null) {
             new PhotoAsyncTask().execute(placeID);
         }
+        priviusButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(isClicked1==true&&isClicked2==false){
+                    secondImage.setVisibility(View.GONE);
+                    firstImage.setVisibility(View.VISIBLE);
+                    isClicked1=false;
+
+                }
+                if(isClicked1==true&&isClicked2==true){
+                    thirdImage.setVisibility(View.GONE);
+                    secondImage.setVisibility(View.VISIBLE);
+                    isClicked2=false;
+                }
+            }
+        });
+        nextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if(isClicked1==true&&isClicked2==false){
+                    secondImage.setVisibility(View.GONE);
+                    thirdImage.setVisibility(View.VISIBLE);
+                    isClicked2=true;
+                }
+                if(isClicked1==false&&isClicked2==false){
+                    firstImage.setVisibility(View.GONE);
+                    secondImage.setVisibility(View.VISIBLE);
+                    isClicked1=true;
+
+                }
+            }
+        });
 
 
     }
@@ -146,7 +195,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
             @Override
             protected Void doInBackground(String... params) {
                 final String placeId = params[0];
-                Places.GeoDataApi.getPlacePhotos(mGoogleApiClient, placeId)
+                Places.GeoDataApi.getPlacePhotos(mGoogleApiClient2, placeId)
                         .setResultCallback(new ResultCallback<PlacePhotoMetadataResult>() {
 
 
@@ -157,19 +206,18 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
                                 }
 
                                 PlacePhotoMetadataBuffer photoMetadataBuffer = photos.getPhotoMetadata();
-                                // First 3 photos
-                                for(int i = 0;i<3;i++) {
-                                    if (photoMetadataBuffer.getCount() > 0) {
-                                        // Display the first bitmap in an ImageView in the size of the view
-                                        photoMetadataBuffer.get(i)
-                                                .getScaledPhoto(mGoogleApiClient, firstImage.getWidth(),
-                                                        firstImage.getHeight())
-                                                .setResultCallback(mDisplayPhotoResultCallback);
-                                    }
-                                    photoMetadataBuffer.release();
+
+                                if (photoMetadataBuffer.getCount() > 0) {
+                                    // Display the first bitmap in an ImageView in the size of the view
+                                    photoMetadataBuffer.get(counterPhotos)
+                                            .getScaledPhoto(mGoogleApiClient2, firstImage.getWidth(),
+                                                    firstImage.getHeight())
+                                            .setResultCallback(mDisplayPhotoResultCallback);
+
                                 }
                             }
                         });
+
                 return null;
 
             }
@@ -182,7 +230,23 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
                         if (!placePhotoResult.getStatus().isSuccess()) {
                             return;
                         }
-                        firstImage.setImageBitmap(placePhotoResult.getBitmap());
+                        if(counterPhotos==0) {
+                            firstImage.setImageBitmap(placePhotoResult.getBitmap());
+                            new PhotoAsyncTask().execute(placeID);
+                        }
+                        if(counterPhotos==1){
+                            secondImage.setImageBitmap(placePhotoResult.getBitmap());
+                            new PhotoAsyncTask().execute(placeID);
+
+                        }
+                        if(counterPhotos==2){
+                            thirdImage.setImageBitmap(placePhotoResult.getBitmap());
+
+                        }
+                        counterPhotos++;
+                        if(counterPhotos==3){
+                            counterPhotos=0;
+                        }
                     }
                 };
             }

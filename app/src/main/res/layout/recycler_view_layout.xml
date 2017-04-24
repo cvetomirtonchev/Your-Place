@@ -22,28 +22,29 @@
             android:layout_height="wrap_content"
             android:text="BEDROOM"
             android:textColor="@color/golden"
-            android:textSize="30sp"
-            android:layout_marginBottom="8dp"/>
+            android:textSize="15sp"
+            android:layout_marginBottom="4dp"/>
         <TextView
             android:gravity="center"
             android:id="@+id/list_distance_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textColor="@android:color/black"
-            android:textSize="15sp"
+            android:textSize="8sp"
             android:text="Distance: "
-            android:layout_marginBottom="10dp"/>
+            android:layout_marginBottom="5dp"/>
         <TextView
             android:gravity="center"
             android:textColor="@android:color/black"
             android:id="@+id/list_adress_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="15sp"
+            android:textSize="8sp"
             android:text="Adress "/>
 
     </LinearLayout>
-    <LinearLayout
+    <RelativeLayout
+        android:id="@+id/list_rating_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="horizontal"
@@ -57,11 +58,17 @@
 
         <RatingBar
             android:id="@+id/list_rating_bar"
-            style="@style/Widget.AppCompat.RatingBar.Small"
+            style="?android:attr/ratingBarStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:isIndicator="true" />
-    </LinearLayout>
+            android:isIndicator="true"
+            android:layout_toRightOf="@+id/list_rating_text" />
+        <TextView
+            android:id="@+id/list_open_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"/>
+    </RelativeLayout>
 
 
 

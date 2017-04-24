@@ -9,6 +9,8 @@ import android.view.ViewGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.google.android.gms.maps.model.LatLng;
+
 import java.util.ArrayList;
 
 import tonchev.yourplace.modul.Place;
@@ -20,6 +22,8 @@ import tonchev.yourplace.modul.Place;
 public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyViewHolder> {
     private Context context;
     private ArrayList<Place> places;
+    tonchev.yourplace.modul.Place temp;
+    double[] ll = new double[2];
 
     public PlaceListAdapter(Context context, ArrayList<Place> places) {
         this.context = context;
@@ -35,12 +39,14 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
     }
 
     @Override
-    public void onBindViewHolder(PlaceListAdapter.MyViewHolder holder, int position) {
+    public void onBindViewHolder(final PlaceListAdapter.MyViewHolder holder, int position) {
         Place place = places.get(position);
         holder.name.setText(place.getName());
         holder.rating.setText(place.getRating());
         holder.distance.setText("Distance: "+place.getDistance() +" / "+place.getDistanceTime());
         holder.adress.setText(place.getAdress());
+        holder.isOpen.setText("Open now: " + place.getOpenNow());
+
 
 
         try {
@@ -50,11 +56,27 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
             holder.ratingBar.setRating(0.0f);
             holder.rating.setText("N/A");
         }
-
-        holder.name.setOnClickListener(new View.OnClickListener() {
+        holder.row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(context,PlaceActivity.class);
+                String clickedName = holder.name.getText().toString();
+                for (tonchev.yourplace.modul.Place p : places) {
+                    if (clickedName.equals(p.getName())) {
+                        temp = p;
+                        break;
+                    }
+                }
+                Intent intent = new Intent(context, PlaceActivity.class );
+                if (temp.getLatLng() == null) {
+                    LatLng ltLg = new LatLng(ll[0], ll[1]);
+                    temp.setLatLng(ltLg);
+                }
+                ll[0] = temp.getLatLng().latitude;
+                ll[1] = temp.getLatLng().longitude;
+                temp.setLatLng(null);
+                intent.putExtra("mqsto", temp);
+                intent.putExtra("ID", temp.getId());
+                intent.putExtra("LL",ll);
                 context.startActivity(intent);
             }
         });
@@ -73,6 +95,7 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
         RatingBar ratingBar;
         TextView distance;
         TextView adress;
+        TextView isOpen;
 
 
         MyViewHolder(View row){
@@ -83,6 +106,7 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
             ratingBar = (RatingBar) row.findViewById(R.id.list_rating_bar);
             distance = (TextView) row.findViewById(R.id.list_distance_text);
             adress = (TextView) row.findViewById(R.id.list_adress_text);
+            isOpen = (TextView) row.findViewById(R.id.list_open_text);
 
         }
     }

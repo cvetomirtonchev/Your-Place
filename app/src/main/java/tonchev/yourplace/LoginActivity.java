@@ -13,6 +13,7 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
@@ -30,15 +31,17 @@ import com.google.android.gms.maps.model.LatLng;
 
 import static android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS;
 import static com.google.android.gms.common.api.GoogleApiClient.Builder;
+import static com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import static com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 import static tonchev.yourplace.ChoseActivity.location;
 
-public class LoginActivity extends AppCompatActivity implements OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+public class LoginActivity extends AppCompatActivity implements OnConnectionFailedListener, ConnectionCallbacks {
 
-    public static final int REQUEST_CODE = 1;
+    public static final int RC_SIGN_IN = 1;
     private static final int REQUEST_CHECK_SETTINGS = 13;
     public static GoogleApiClient mGoogleApiClient;
+    public static GoogleSignInAccount acct;
 
     private SignInButton signInButton;
 
@@ -59,13 +62,56 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                 .addOnConnectionFailedListener(this)
                 .addApi(LocationServices.API)
                 .build();
-        mGoogleApiClient.connect();
 
         signInButton= (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                   signIn();
+            }
+        });
+
+        final LocationRequest mLocationRequest = new LocationRequest();
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(mLocationRequest);
+        PendingResult<LocationSettingsResult> result =
+                LocationServices.SettingsApi.checkLocationSettings(mGoogleApiClient,
+                        builder.build());
+
+        result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+            @Override
+            public void onResult(@NonNull LocationSettingsResult result) {
+                final Status status = result.getStatus();
+                switch (status.getStatusCode()) {
+                    case LocationSettingsStatusCodes.SUCCESS:
+                        // All location settings are satisfied. The client can
+                        // initialize location requests here.
+
+//                                mLocationRequest.setInterval(10000);
+//                                mLocationRequest.setFastestInterval(5000);
+                        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+                        Toast.makeText(LoginActivity.this, "Location services are on!", Toast.LENGTH_SHORT).show();
+                        break;
+                    case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                        // Location settings are not satisfied, but this can be fixed
+                        // by showing the user a dialog.
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),
+                            // and check the result in onActivityResult().
+                            status.startResolutionForResult(
+                                    LoginActivity.this,
+                                    REQUEST_CHECK_SETTINGS);
+                        } catch (IntentSender.SendIntentException e) {
+                            // Ignore the error.
+                        }
+                        break;
+                    case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                        // Location settings are not satisfied. However, we have no way
+                        // to fix the settings so we won't show the dialog.
+
+                        break;
+                }
             }
         });
 
@@ -122,7 +168,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
 
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, REQUEST_CODE);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
@@ -130,7 +176,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == REQUEST_CODE) {
+        if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
@@ -142,7 +188,9 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
+
         if (result.isSuccess()) {
+            acct = result.getSignInAccount();
             Intent intent = new Intent(LoginActivity.this,ChoseActivity.class);
             startActivity(intent);
         } else {
@@ -172,7 +220,6 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                 mGoogleApiClient);
         if (mLastLocation != null) {
             location = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            Toast.makeText(this, "" + location.latitude + "," + location.longitude, Toast.LENGTH_SHORT).show();
         }
     }
 

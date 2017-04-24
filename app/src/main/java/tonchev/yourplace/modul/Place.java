@@ -27,14 +27,8 @@ public class Place implements Comparable<Place>,Serializable {
     private LatLng latLng;
     private String distance;
     private String distanceTime;
-
-
-
-//    private Time workTime;
-//    private double distance;
-
-//    private ArrayList<Integer> pictures;
-
+    private int distValue;
+    private int timeValue;
 
     public Place() {
     }
@@ -51,14 +45,33 @@ public class Place implements Comparable<Place>,Serializable {
         this.rating = rating;
         this.phoneNumber = phoneNumber;
         this.webAdress = webAdress;
-        this.latLng = latLng;
 
     }
 
     @Override
     public int compareTo(Place o) {
         //TODO
-        return this.name.compareTo(o.name);
+        int isOpen = 0;
+        int isOpenO = 0;
+        if (this.getOpenNow().equals("YES")) {
+            isOpen = -1;
+        }
+        if (this.getOpenNow().equals("NO")) {
+            isOpen = 0;
+        }
+        if (this.getOpenNow().equals("Not Known")) {
+            isOpen = 1;
+        }
+        if (o.getOpenNow().equals("YES")) {
+            isOpenO = -1;
+        }
+        if (o.getOpenNow().equals("NO")) {
+            isOpenO = 0;
+        }
+        if (o.getOpenNow().equals("Not Known")) {
+            isOpenO = 1;
+        }
+        return isOpen-isOpenO;
     }
 
     public String getDistanceTime() {
@@ -147,5 +160,21 @@ public class Place implements Comparable<Place>,Serializable {
 
     public void setDistance(String distance) {
         this.distance = distance;
+    }
+
+    public int getDistValue() {
+        return distValue;
+    }
+
+    public void setDistValue(int distValue) {
+        this.distValue = distValue;
+    }
+
+    public int getTimeValue() {
+        return timeValue;
+    }
+
+    public void setTimeValue(int timeValue) {
+        this.timeValue = timeValue;
     }
 }

@@ -8,20 +8,72 @@
     android:layout_height="match_parent"
     android:background="@drawable/first_screen"
     tools:context="tonchev.yourplace.PlaceActivity">
-
-    <ImageView
-        android:id="@+id/image_v"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3" />
+        android:layout_weight="3"
+        android:orientation="horizontal">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <Button
+                android:background="@drawable/my_button"
+                android:id="@+id/place_activity_button_photo_back"
+                android:layout_width="match_parent"
+                android:text="<"
+                android:textSize="20sp"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="6"
+            android:orientation="vertical">
+            <ImageView
+                android:id="@+id/image_v1"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                />
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/image_v2"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                />
+            <ImageView
+                android:visibility="gone"
+                android:id="@+id/image_v3"
+                android:layout_height="match_parent"
+                android:layout_width="match_parent"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <Button
+                android:background="@drawable/my_button"
+                android:id="@+id/place_activity_button_photo_next"
+                android:layout_width="match_parent"
+                android:text=">"
+                android:textSize="20sp"
+                android:layout_height="match_parent" />
+        </LinearLayout>
+
+
+    </LinearLayout>
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_marginBottom="8dp"
         android:layout_weight="1"
-        android:orientation="horizontal"
         android:background="@color/blueTransperent"
-        android:layout_marginBottom="8dp">
+        android:orientation="horizontal">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -35,21 +87,22 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:textSize="30sp" />
+                android:textSize="30sp"
+                android:textColor="@color/colorPrimary"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:orientation="horizontal"
-                android:gravity="left">
+                android:gravity="left"
+                android:orientation="horizontal">
 
                 <TextView
                     android:id="@+id/activity_place_rating_text"
                     android:layout_width="wrap_content"
 
-                    android:gravity="center"
                     android:layout_height="match_parent"
+                    android:gravity="center"
                     android:textColor="@color/golden"
                     android:textSize="20sp" />
 
@@ -58,26 +111,29 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:isIndicator="true"
-                    android:numStars="5" />
-
+                    android:numStars="5"
+                    style="?android:attr/ratingBarStyleIndicator"/>
 
 
             </LinearLayout>
 
 
         </LinearLayout>
+
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:orientation="vertical">
-           <Button
-               android:id="@+id/activity_place_direction_button"
-               android:text="direktion"
-               android:layout_width="match_parent"
-               android:layout_height="match_parent" />
 
-            </LinearLayout>
+            <Button
+                android:id="@+id/activity_place_direction_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="direction"
+                android:background="@drawable/googlemaps"/>
+
+        </LinearLayout>
 
 
     </LinearLayout>
@@ -106,22 +162,21 @@
 
         <Button
             android:id="@+id/activity_place_call"
-            android:text="call"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent" />
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/call_icon"/>
+
         <Button
             android:id="@+id/activity_place_web"
-            android:text="Web"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent" />
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/web_icon_3"/>
+
         <Button
             android:id="@+id/activity_place_save"
-            android:text="Save"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="match_parent" />
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="@drawable/save_icon"/>
 
 
     </LinearLayout>
