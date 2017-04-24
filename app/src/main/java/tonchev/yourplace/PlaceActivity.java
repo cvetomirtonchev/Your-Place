@@ -157,14 +157,17 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
                                 }
 
                                 PlacePhotoMetadataBuffer photoMetadataBuffer = photos.getPhotoMetadata();
-                                if (photoMetadataBuffer.getCount() > 0) {
-                                    // Display the first bitmap in an ImageView in the size of the view
-                                    photoMetadataBuffer.get(0)
-                                            .getScaledPhoto(mGoogleApiClient, firstImage.getWidth(),
-                                                    firstImage.getHeight())
-                                            .setResultCallback(mDisplayPhotoResultCallback);
+                                // First 3 photos
+                                for(int i = 0;i<3;i++) {
+                                    if (photoMetadataBuffer.getCount() > 0) {
+                                        // Display the first bitmap in an ImageView in the size of the view
+                                        photoMetadataBuffer.get(i)
+                                                .getScaledPhoto(mGoogleApiClient, firstImage.getWidth(),
+                                                        firstImage.getHeight())
+                                                .setResultCallback(mDisplayPhotoResultCallback);
+                                    }
+                                    photoMetadataBuffer.release();
                                 }
-                                photoMetadataBuffer.release();
                             }
                         });
                 return null;
