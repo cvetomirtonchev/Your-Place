@@ -56,11 +56,9 @@ import static tonchev.yourplace.ChoseActivity.location;
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback, LocationListener,  GoogleApiClient.OnConnectionFailedListener, GoogleMap.OnMarkerClickListener {
 
-    private static final int MAX_PLACES = 20;
     private GoogleMap mMap;
     private MapView mapView;
     private LocationManager locMan;
-    private Marker userMarker;
     private ArrayList<tonchev.yourplace.modul.Place> returnedPlaces;
     private Button generateList;
     private Button backToMap;

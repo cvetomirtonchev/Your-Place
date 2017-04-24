@@ -35,7 +35,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
     private TextView placeRating;
     private GoogleMap mMap;
     private MapView mapView;
-    private GoogleApiClient mGoogleApiClient;
+    private GoogleApiClient mGoogleApiClient2;
     private ImageView firstImage;
     private String placeID;
     private ResultCallback<PlacePhotoResult> mDisplayPhotoResultCallback;
@@ -128,7 +128,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
        }
 
 
-        mGoogleApiClient = new GoogleApiClient
+        mGoogleApiClient2 = new GoogleApiClient
                 .Builder(this)
                 .addApi(Places.GEO_DATA_API)
                 .addApi(Places.PLACE_DETECTION_API)
@@ -146,7 +146,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
             @Override
             protected Void doInBackground(String... params) {
                 final String placeId = params[0];
-                Places.GeoDataApi.getPlacePhotos(mGoogleApiClient, placeId)
+                Places.GeoDataApi.getPlacePhotos(mGoogleApiClient2, placeId)
                         .setResultCallback(new ResultCallback<PlacePhotoMetadataResult>() {
 
 
@@ -160,7 +160,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
                                 if (photoMetadataBuffer.getCount() > 0) {
                                     // Display the first bitmap in an ImageView in the size of the view
                                     photoMetadataBuffer.get(0)
-                                            .getScaledPhoto(mGoogleApiClient, firstImage.getWidth(),
+                                            .getScaledPhoto(mGoogleApiClient2, firstImage.getWidth(),
                                                     firstImage.getHeight())
                                             .setResultCallback(mDisplayPhotoResultCallback);
                                 }

@@ -9,10 +9,12 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
@@ -30,15 +32,17 @@ import com.google.android.gms.maps.model.LatLng;
 
 import static android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS;
 import static com.google.android.gms.common.api.GoogleApiClient.Builder;
+import static com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
 import static com.google.android.gms.common.api.GoogleApiClient.OnConnectionFailedListener;
 import static com.google.android.gms.location.LocationServices.FusedLocationApi;
 import static tonchev.yourplace.ChoseActivity.location;
 
-public class LoginActivity extends AppCompatActivity implements OnConnectionFailedListener, GoogleApiClient.ConnectionCallbacks {
+public class LoginActivity extends AppCompatActivity implements OnConnectionFailedListener, ConnectionCallbacks {
 
-    public static final int REQUEST_CODE = 1;
+    public static final int RC_SIGN_IN = 1;
     private static final int REQUEST_CHECK_SETTINGS = 13;
     public static GoogleApiClient mGoogleApiClient;
+    public static GoogleSignInAccount acct;
 
     private SignInButton signInButton;
 
@@ -60,6 +64,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                 .addApi(LocationServices.API)
                 .build();
         mGoogleApiClient.connect();
+        Log.d("konekt", "rezultat:" + mGoogleApiClient.isConnected());
 
         signInButton= (SignInButton) findViewById(R.id.sign_in_button);
         signInButton.setOnClickListener(new View.OnClickListener() {
@@ -122,7 +127,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
 
     private void signIn() {
         Intent signInIntent = Auth.GoogleSignInApi.getSignInIntent(mGoogleApiClient);
-        startActivityForResult(signInIntent, REQUEST_CODE);
+        startActivityForResult(signInIntent, RC_SIGN_IN);
     }
 
     @Override
@@ -130,7 +135,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         super.onActivityResult(requestCode, resultCode, data);
 
         // Result returned from launching the Intent from GoogleSignInApi.getSignInIntent(...);
-        if (requestCode == REQUEST_CODE) {
+        if (requestCode == RC_SIGN_IN) {
             GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
             handleSignInResult(result);
         }
@@ -142,7 +147,9 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
+
         if (result.isSuccess()) {
+            acct = result.getSignInAccount();
             Intent intent = new Intent(LoginActivity.this,ChoseActivity.class);
             startActivity(intent);
         } else {
@@ -172,7 +179,6 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                 mGoogleApiClient);
         if (mLastLocation != null) {
             location = new LatLng(mLastLocation.getLatitude(), mLastLocation.getLongitude());
-            Toast.makeText(this, "" + location.latitude + "," + location.longitude, Toast.LENGTH_SHORT).show();
         }
     }
 
