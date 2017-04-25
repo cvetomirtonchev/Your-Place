@@ -159,17 +159,13 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
                 }
                 LatLng placeLatLng = place.getLatLng();
                 double[] ll = {placeLatLng.latitude, placeLatLng.longitude};
-                if (isValid(name,address,id,rating,phone,webAdress)){
-                    tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(id, name, address, rating, phone, webAdress);
-                    intent.putExtra("mqsto", mqsto);
-                    intent.putExtra("ID", place.getId());
-                    intent.putExtra("LL",ll);
-                    startActivity(intent);
+                tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(id, name, address, rating, phone, webAdress);
+                intent.putExtra("mqsto", mqsto);
+                intent.putExtra("ID", place.getId());
+                intent.putExtra("LL",ll);
+                startActivity(intent);
 
-                }
-                else {
-                    Toast.makeText(ChoseActivity.this, "Inavalid Place", Toast.LENGTH_SHORT).show();
-                }
+
 
             }
 
