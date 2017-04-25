@@ -407,12 +407,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                     int distanceVal = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("distance").getInt("value");
                     String distanceMinute = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getString("text");
                     int timeVal = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getInt("value");
+                    String address = jsonObject2.getString("destination_addresses");
                     Log.d("testdi", jsonObject2.toString());
 
                     returnedPlaces.get(i).setDistance(distanceKm);
                     returnedPlaces.get(i).setDistanceTime(distanceMinute);
                     returnedPlaces.get(i).setDistValue(distanceVal);
                     returnedPlaces.get(i).setTimeValue(timeVal);
+                    returnedPlaces.get(i).setAdress(address);
 
                 } catch (ProtocolException e) {
                     e.printStackTrace();
@@ -459,8 +461,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                         temp.setPhoneNumber(phone);
                         String webAddress = jsonObject.getJSONObject("result").optString("website");
                         temp.setWebAdress(webAddress);
-                        String address = jsonObject.getJSONObject("result").optString("formatted_address");
-                        temp.setAdress(address);
+//                        String address = jsonObject.getJSONObject("result").optString("formatted_address");
+//                        temp.setAdress(address);
                         Log.d("akostane", "" + jsonObject.toString());
                     }
                 } catch (MalformedURLException e) {
