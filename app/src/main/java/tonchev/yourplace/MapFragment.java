@@ -69,6 +69,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     private Button sortKm;
     private Button sortTime;
     private Button sortOpen;
+    private Button sortRating;
 
 
     @Override
@@ -82,6 +83,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         sortKm = (Button) root.findViewById(R.id.sort_by_km);
         sortTime = (Button) root.findViewById(R.id.sort_by_time);
         sortOpen = (Button) root.findViewById(R.id.sort_by_availability);
+        sortRating = (Button) root.findViewById(R.id.sort_by_rating);
         mapView = (MapView) root.findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
@@ -158,6 +160,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                 recyclerView.setAdapter(adapter);
             }
         });
+        sortRating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Collections.sort(returnedPlaces, new CompareByRating());
+                recyclerView.setAdapter(adapter);
+            }
+        });
         return root;
     }
 
@@ -210,7 +219,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
             return false;
         }
         tonchev.yourplace.modul.Place temp = (tonchev.yourplace.modul.Place) marker.getTag();
-        new GetDetails().execute(temp);
+        Intent intent = new Intent(getActivity(), PlaceActivity.class );
+        double[] ll = {temp.getLatLng().latitude, temp.getLatLng().longitude};
+        temp.setLatLng(null);
+        intent.putExtra("mqsto", temp);
+        intent.putExtra("ID", temp.getId());
+        intent.putExtra("LL",ll);
+
+        startActivity(intent);
         return true;
     }
 
@@ -322,7 +338,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                                 }
 
                             } else {
-                                poi.setOpenNow("Not Known");
+                                poi.setOpenNow("N/A");
                             }
                             if (jsonArray.getJSONObject(i).has("types")) {
                                 JSONArray typesArray = jsonArray.getJSONObject(i).getJSONArray("types");
@@ -397,7 +413,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 
                     returnedPlaces.get(i).setDistance(distanceKm);
                     returnedPlaces.get(i).setDistanceTime(distanceMinute);
-                    returnedPlaces.get(i).setAdress(adress);
                     returnedPlaces.get(i).setDistValue(distanceVal);
                     returnedPlaces.get(i).setTimeValue(timeVal);
 
@@ -416,62 +431,51 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            super.onPostExecute(aVoid);
-            for (tonchev.yourplace.modul.Place place : returnedPlaces) {
-
-                Log.d("distanceTest", place.getName() + " " + place.getDistance() + "id:" + place.getId() + " dist val:" + place.getDistValue() + " time val: " + place.getTimeValue() );
-            }
+            new GetDetails().execute();
         }
     }
 
-    private class GetDetails extends AsyncTask <tonchev.yourplace.modul.Place, Void, tonchev.yourplace.modul.Place> {
+    private class GetDetails extends AsyncTask <Void, Void, Void> {
 
 
         @Override
-        protected tonchev.yourplace.modul.Place doInBackground(tonchev.yourplace.modul.Place... params) {
-            tonchev.yourplace.modul.Place temp = params[0];
-            String placeID = temp.getId();
+        protected Void doInBackground(Void... params) {
 
-            String request = "https://maps.googleapis.com/maps/api/place/details/json?placeid="+placeID+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";
-            try {
-                URL url = new URL(request);
-                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-                connection.setRequestMethod("GET");
-                Scanner sc = new Scanner(connection.getInputStream());
-                StringBuilder result = new StringBuilder();
-                while (sc.hasNextLine()) {
-                    result.append(sc.nextLine());
+
+            for (int i = 0; i < returnedPlaces.size(); i ++) {
+                tonchev.yourplace.modul.Place temp = returnedPlaces.get(i);
+                String placeID = temp.getId();
+                String request = "https://maps.googleapis.com/maps/api/place/details/json?placeid=" + placeID + "&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";
+                try {
+                    URL url = new URL(request);
+                    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                    connection.setRequestMethod("GET");
+                    Scanner sc = new Scanner(connection.getInputStream());
+                    StringBuilder result = new StringBuilder();
+                    while (sc.hasNextLine()) {
+                        result.append(sc.nextLine());
+                    }
+                    JSONObject jsonObject = new JSONObject(result.toString());
+                    if (jsonObject.has("result")) {
+                        String phone = jsonObject.getJSONObject("result").optString("formatted_phone_number");
+                        temp.setPhoneNumber(phone);
+                        String webAddress = jsonObject.getJSONObject("result").optString("website");
+                        temp.setWebAdress(webAddress);
+                        String address = jsonObject.getJSONObject("result").optString("vicinity");
+                        temp.setAdress(address);
+                        Log.d("akostane", "" + jsonObject.toString());
+                    }
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
                 }
-                JSONObject jsonObject = new JSONObject(result.toString());
-                if (jsonObject.has("result")) {
-                    String phone = jsonObject.getJSONObject("result").optString("formatted_phone_number");
-                    temp.setPhoneNumber(phone);
-                    String webAddress = jsonObject.getJSONObject("result").optString("website");
-                    temp.setWebAdress(webAddress);
-                    Log.d("akostane", "phone: " + phone );
-                }
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
             }
-
-            return temp;
+            return null;
         }
 
-        @Override
-        protected void onPostExecute(tonchev.yourplace.modul.Place place) {
-            Intent intent = new Intent(getActivity(), PlaceActivity.class );
-            double[] ll = {place.getLatLng().latitude, place.getLatLng().longitude};
-            place.setLatLng(null);
-            intent.putExtra("mqsto", place);
-            intent.putExtra("ID", place.getId());
-            intent.putExtra("LL",ll);
-
-            startActivity(intent);
-        }
     }
 
 }

@@ -17,19 +17,29 @@
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:textSize="10sp"
             android:text="(km)"/>
         <Button
             android:id="@+id/sort_by_time"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:textSize="10sp"
             android:text="(minutes)"/>
         <Button
             android:id="@+id/sort_by_availability"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:textSize="10sp"
             android:text="(open now)"/>
+        <Button
+            android:id="@+id/sort_by_rating"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:textSize="10sp"
+            android:text="(rating)"/>
 
     </LinearLayout>
     <android.support.v7.widget.RecyclerView

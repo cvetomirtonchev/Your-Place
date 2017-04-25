@@ -22,19 +22,15 @@ import com.google.android.gms.location.places.PlacePhotoMetadataBuffer;
 import com.google.android.gms.location.places.PlacePhotoMetadataResult;
 import com.google.android.gms.location.places.PlacePhotoResult;
 import com.google.android.gms.location.places.Places;
-import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
 
 import tonchev.yourplace.modul.Place;
-
-import static tonchev.yourplace.LoginActivity.mGoogleApiClient;
 
 
 public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
     private TextView name;
     private Place place;
     private TextView placeRating;
-    private MapView mapView;
     private GoogleApiClient mGoogleApiClient2;
     private ImageView firstImage;
     private String placeID;
@@ -52,6 +48,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
     private boolean isClicked2;
     private Button priviusButton;
     private Button nextButton;
+    private TextView openNow;
 
 
     @Override
@@ -64,7 +61,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
         webAdress = (Button) findViewById(R.id.activity_place_web);
         savePlace = (Button) findViewById(R.id.activity_place_save);
         name = (TextView) findViewById(R.id.activity_place_name);
-        mapView = (MapView) findViewById(R.id.map_view);
+        openNow = (TextView) findViewById(R.id.activity_place_open_now);
         firstImage = (ImageView) findViewById(R.id.image_v1);
         ratingBar = (RatingBar) findViewById(R.id.activity_place_rating);
         placeRating = (TextView) findViewById(R.id.activity_place_rating_text);
@@ -80,7 +77,14 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
             name.setText(place.getName());
             ratingBar.setRating(Float.parseFloat(place.getRating()));
             placeRating.setText(place.getRating());
-            adress.setText(place.getAdress());
+            adress.setText("Address: " + place.getAdress());
+
+            if(place.getOpenNow()==null) {
+                openNow.setText("Open now: N/A");
+            }
+            else{
+                openNow.setText("Open now: " + place.getOpenNow());
+            }
             if(getIntent().getExtras().getDoubleArray("LL")!= null) {
                 double[] coord = getIntent().getExtras().getDoubleArray("LL");
                 LatLng placeLatLng = new LatLng(coord[0], coord[1]);

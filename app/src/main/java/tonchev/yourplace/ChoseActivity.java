@@ -79,7 +79,6 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
             }
         });
 
-
         //TabLayout
         nTabLayout = (TabLayout) findViewById(R.id.tab_layout);
         nTabLayout.addTab(nTabLayout.newTab().setText("Pick"));
@@ -138,8 +137,6 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
                 LatLng placeLatLng = place.getLatLng();
                 double[] ll = {placeLatLng.latitude, placeLatLng.longitude};
 
-
-
                 tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(id, name, address, rating, phone, webAdress);
                 intent.putExtra("mqsto", mqsto);
                 intent.putExtra("ID", place.getId());
@@ -152,11 +149,7 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
 
             }
         });
-
-
     }
-
-
 
     @Override
     public void onBackPressed() {
@@ -213,10 +206,10 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
 
     }
 
-    @Override
-    public void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
-    }
+//    @Override
+//    public void onStop() {
+//        mGoogleApiClient.disconnect();
+//        super.onStop();
+//    }
 
 }
