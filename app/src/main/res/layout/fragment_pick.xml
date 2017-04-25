@@ -5,12 +5,53 @@
     android:layout_height="match_parent"
     tools:context="tonchev.yourplace.PickFragment">
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Set search radius:"
+        android:textSize="15sp"
+        android:paddingLeft="8dp"
+        android:paddingTop="8dp"
+        android:textColor="@color/colorPrimary"/>
+
+    <RelativeLayout
+        android:id="@+id/seekbar_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:paddingLeft="8dp">
+
+        <SeekBar
+            android:id="@+id/seek_bar"
+            android:layout_width="280dp"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginTop="18dp"
+            android:max="20"
+            />
+
+        <TextView
+            android:id="@+id/set_radius"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="18dp"
+            android:layout_toRightOf="@+id/seek_bar"
+            android:text="1000m"
+            android:textColor="@color/colorPrimary"
+            android:visibility="gone" />
+
+    </RelativeLayout>
+
     <com.github.mikephil.charting.charts.PieChart
         android:id="@+id/chart"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="0dp"
+        android:layout_weight="8">
 
 
     </com.github.mikephil.charting.charts.PieChart>
+
 
 </LinearLayout>

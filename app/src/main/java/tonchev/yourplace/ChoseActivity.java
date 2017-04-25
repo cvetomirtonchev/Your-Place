@@ -45,6 +45,7 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
     public static TabLayout nTabLayout;
     public static String selection;
     public static LatLng location;
+    public static int setRadius;
 
     PlaceAutocompleteFragment searchBar;
 
