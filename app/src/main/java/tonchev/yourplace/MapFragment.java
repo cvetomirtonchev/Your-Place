@@ -415,6 +415,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                     returnedPlaces.get(i).setDistanceTime(distanceMinute);
                     returnedPlaces.get(i).setDistValue(distanceVal);
                     returnedPlaces.get(i).setTimeValue(timeVal);
+                    returnedPlaces.get(i).setAdress(adress);
 
                 } catch (ProtocolException e) {
                     e.printStackTrace();
@@ -457,12 +458,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                     }
                     JSONObject jsonObject = new JSONObject(result.toString());
                     if (jsonObject.has("result")) {
+
                         String phone = jsonObject.getJSONObject("result").optString("formatted_phone_number");
                         temp.setPhoneNumber(phone);
                         String webAddress = jsonObject.getJSONObject("result").optString("website");
                         temp.setWebAdress(webAddress);
-                        String address = jsonObject.getJSONObject("result").optString("vicinity");
-                        temp.setAdress(address);
+//                        String address = jsonObject.getJSONObject("result").optString("formatted_address");
+//                        temp.setAdress(address);
                         Log.d("akostane", "" + jsonObject.toString());
                     }
                 } catch (MalformedURLException e) {

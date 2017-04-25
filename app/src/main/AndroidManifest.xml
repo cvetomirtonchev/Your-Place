@@ -15,7 +15,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
-        <activity android:name=".LoginActivity">
+
+        <activity android:name=".LoginActivity"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <action android:name="android.intent.action.DIAL"/>
@@ -36,7 +38,9 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY" />
+            android:value="AIzaSyDQYolDKhtWPEtVn8AdeUOAEh18hWDm5yY" />
+        <!--AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY-->
+
 
         <!--AIzaSyAzRf0XksuGGVPnRq0AKkk9xK_koJ-znoM-->
 
