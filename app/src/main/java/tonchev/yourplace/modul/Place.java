@@ -59,7 +59,7 @@ public class Place implements Comparable<Place>,Serializable {
         if (this.getOpenNow().equals("NO")) {
             isOpen = 0;
         }
-        if (this.getOpenNow().equals("Not Known")) {
+        if (this.getOpenNow().equals("N/A")) {
             isOpen = 1;
         }
         if (o.getOpenNow().equals("YES")) {
@@ -68,7 +68,7 @@ public class Place implements Comparable<Place>,Serializable {
         if (o.getOpenNow().equals("NO")) {
             isOpenO = 0;
         }
-        if (o.getOpenNow().equals("Not Known")) {
+        if (o.getOpenNow().equals("N/A")) {
             isOpenO = 1;
         }
         return isOpen-isOpenO;

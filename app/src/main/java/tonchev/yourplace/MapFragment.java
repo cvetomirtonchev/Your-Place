@@ -69,6 +69,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     private Button sortKm;
     private Button sortTime;
     private Button sortOpen;
+    private Button sortRating;
 
 
     @Override
@@ -82,6 +83,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         sortKm = (Button) root.findViewById(R.id.sort_by_km);
         sortTime = (Button) root.findViewById(R.id.sort_by_time);
         sortOpen = (Button) root.findViewById(R.id.sort_by_availability);
+        sortRating = (Button) root.findViewById(R.id.sort_by_rating);
         mapView = (MapView) root.findViewById(R.id.map_view);
         mapView.onCreate(savedInstanceState);
         mapView.onResume();
@@ -155,6 +157,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
             @Override
             public void onClick(View v) {
                 Collections.sort(returnedPlaces);
+                recyclerView.setAdapter(adapter);
+            }
+        });
+        sortRating.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Collections.sort(returnedPlaces, new CompareByRating());
                 recyclerView.setAdapter(adapter);
             }
         });
@@ -329,7 +338,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                                 }
 
                             } else {
-                                poi.setOpenNow("Not Known");
+                                poi.setOpenNow("N/A");
                             }
                             if (jsonArray.getJSONObject(i).has("types")) {
                                 JSONArray typesArray = jsonArray.getJSONObject(i).getJSONArray("types");
@@ -404,7 +413,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 
                     returnedPlaces.get(i).setDistance(distanceKm);
                     returnedPlaces.get(i).setDistanceTime(distanceMinute);
-                    returnedPlaces.get(i).setAdress(adress);
                     returnedPlaces.get(i).setDistValue(distanceVal);
                     returnedPlaces.get(i).setTimeValue(timeVal);
 
@@ -453,7 +461,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                         temp.setPhoneNumber(phone);
                         String webAddress = jsonObject.getJSONObject("result").optString("website");
                         temp.setWebAdress(webAddress);
-                        Log.d("akostane", "phone: " + phone);
+                        String address = jsonObject.getJSONObject("result").optString("vicinity");
+                        temp.setAdress(address);
+                        Log.d("akostane", "" + jsonObject.toString());
                     }
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
