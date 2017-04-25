@@ -137,20 +137,40 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
             @Override
             public void onPlaceSelected(Place place) {
                 Intent intent = new Intent(ChoseActivity.this, PlaceActivity.class);
-                String name = place.getName().toString();
-                String address = place.getAddress().toString();
-                String id = place.getId();
-                String rating = String.valueOf(place.getRating());
-                String phone = place.getPhoneNumber().toString();
-                String webAdress = place.getWebsiteUri().toString();
+                String name = null;
+                String address = null;
+                String id = null;
+                String rating = null;
+                String phone = null;
+                String webAdress = null ;
+                if( place.getName()!=null){
+                    name = place.getName().toString();
+                }
+                if( place.getAddress()!=null){
+                    address = place.getAddress().toString();
+                }
+                if( place.getId()!=null){
+                    id = place.getId();
+                }
+                if(String.valueOf(place.getRating())!= null) {
+                    rating = String.valueOf(place.getRating());
+                }
+                if( place.getPhoneNumber()!=null) {
+                    phone = place.getPhoneNumber().toString();
+                }
+                if(place.getWebsiteUri()!=null) {
+                    webAdress = place.getWebsiteUri().toString();
+                }
                 LatLng placeLatLng = place.getLatLng();
                 double[] ll = {placeLatLng.latitude, placeLatLng.longitude};
-
                 tonchev.yourplace.modul.Place mqsto = new tonchev.yourplace.modul.Place(id, name, address, rating, phone, webAdress);
                 intent.putExtra("mqsto", mqsto);
                 intent.putExtra("ID", place.getId());
                 intent.putExtra("LL",ll);
                 startActivity(intent);
+
+
+
             }
 
             @Override
@@ -158,6 +178,15 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
 
             }
         });
+    }
+
+    private boolean isValid(String name, String address, String id, String rating, String phone, String webAdress) {
+        if(name!=null&&webAdress!=null&&id!=null&&rating!=null&&phone!=null&webAdress!=null){
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     @Override

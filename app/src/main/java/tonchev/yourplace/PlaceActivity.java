@@ -49,6 +49,8 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
     private Button priviusButton;
     private Button nextButton;
     private TextView openNow;
+    private boolean slideShowed;
+
 
 
     @Override
@@ -70,6 +72,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
         thirdImage = (ImageView) findViewById(R.id.image_v3);
         priviusButton = (Button) findViewById(R.id.place_activity_button_photo_back);
         nextButton = (Button) findViewById(R.id.place_activity_button_photo_next);
+
 
 
         if (getIntent().getSerializableExtra("mqsto") != null) {
@@ -158,39 +161,39 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
         if(placeID != null) {
             new PhotoAsyncTask().execute(placeID);
         }
-        priviusButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                if(isClicked1==true&&isClicked2==false){
-                    secondImage.setVisibility(View.GONE);
-                    firstImage.setVisibility(View.VISIBLE);
-                    isClicked1=false;
-
-                }
-                if(isClicked1==true&&isClicked2==true){
-                    thirdImage.setVisibility(View.GONE);
-                    secondImage.setVisibility(View.VISIBLE);
-                    isClicked2=false;
-                }
-            }
-        });
-        nextButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-
-                if(isClicked1==true&&isClicked2==false){
-                    secondImage.setVisibility(View.GONE);
-                    thirdImage.setVisibility(View.VISIBLE);
-                    isClicked2=true;
-                }
-                if(isClicked1==false&&isClicked2==false){
-                    firstImage.setVisibility(View.GONE);
-                    secondImage.setVisibility(View.VISIBLE);
-                    isClicked1=true;
-
-                }
-            }
-        });
+//        priviusButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                if(isClicked1==true&&isClicked2==false){
+//                    secondImage.setVisibility(View.GONE);
+//                    firstImage.setVisibility(View.VISIBLE);
+//                    isClicked1=false;
+//
+//                }
+//                if(isClicked1==true&&isClicked2==true){
+//                    thirdImage.setVisibility(View.GONE);
+//                    secondImage.setVisibility(View.VISIBLE);
+//                    isClicked2=false;
+//                }
+//            }
+//        });
+//        nextButton.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//
+//                if(isClicked1==true&&isClicked2==false){
+//                    secondImage.setVisibility(View.GONE);
+//                    thirdImage.setVisibility(View.VISIBLE);
+//                    isClicked2=true;
+//                }
+//                if(isClicked1==false&&isClicked2==false){
+//                    firstImage.setVisibility(View.GONE);
+//                    secondImage.setVisibility(View.VISIBLE);
+//                    isClicked1=true;
+//
+//                }
+//            }
+//        });
 
 
     }
@@ -245,6 +248,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
                         }
                         if(counterPhotos==2){
                             thirdImage.setImageBitmap(placePhotoResult.getBitmap());
+                            new SlideShow().execute();
 
                         }
                         counterPhotos++;
@@ -260,6 +264,64 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
     @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
+    }
+
+    class SlideShow extends AsyncTask<Void,Integer,Void>{
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            int counter=0;
+            slideShowed = true;
+            while (slideShowed){
+                    try {
+                        if (counter==0) {
+                            publishProgress(counter);
+                            Thread.sleep(5000);
+                            counter++;
+                        }
+                        if(counter==1){
+                            publishProgress(counter);
+                            Thread.sleep(5000);
+                            counter++;
+                        }
+                        if(counter==2){
+                            publishProgress(counter);
+                            Thread.sleep(5000);
+                            counter=0;
+                        }
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+
+
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onProgressUpdate(Integer... values) {
+            super.onProgressUpdate(values);
+            Integer counter = values[0];
+            if(counter==0) {
+                thirdImage.setVisibility(View.GONE);
+                secondImage.setVisibility(View.GONE);
+                firstImage.setVisibility(View.VISIBLE);
+            }
+            if(counter==1) {
+                firstImage.setVisibility(View.GONE);
+                thirdImage.setVisibility(View.GONE);
+                secondImage.setVisibility(View.VISIBLE);
+            }
+            if(counter==2) {
+                secondImage.setVisibility(View.GONE);
+                firstImage.setVisibility(View.GONE);
+                thirdImage.setVisibility(View.VISIBLE);
+            }
+
+
+
+        }
     }
 
     @Override
