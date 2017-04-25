@@ -100,6 +100,7 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
                    if(!mapFragment.isAdded()) {
                        fragmentManager.beginTransaction()
                                .hide(chartFragment)
+
                                .add(R.id.picker_layout, mapFragment, "Map")
                                .commit();
                    }

@@ -38,10 +38,10 @@
         -->
         <meta-data
             android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDQYolDKhtWPEtVn8AdeUOAEh18hWDm5yY" />
+            android:value="AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY" />
         <!--AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY-->
 
-
+        <!--AIzaSyDQYolDKhtWPEtVn8AdeUOAEh18hWDm5yY-->
         <!--AIzaSyAzRf0XksuGGVPnRq0AKkk9xK_koJ-znoM-->
 
         <activity android:name=".PlaceActivity" />
