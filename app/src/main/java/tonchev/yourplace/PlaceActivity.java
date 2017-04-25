@@ -257,4 +257,12 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
 
     }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        firstImage.setImageDrawable(null);
+        secondImage.setImageDrawable(null);
+        thirdImage.setImageDrawable(null);
+    }
 }
