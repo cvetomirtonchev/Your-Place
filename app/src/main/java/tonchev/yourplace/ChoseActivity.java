@@ -91,16 +91,35 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
         fragmentManager.beginTransaction().add(R.id.picker_layout, chartFragment, "Pick").commit();
 
 
+
+
         nTabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
-                if (tab.getText().equals("Map")) {
-                    fragmentManager.beginTransaction().remove(chartFragment).commit();
-                    fragmentManager.beginTransaction().add(R.id.picker_layout, mapFragment, "Map").commit();
+               if (tab.getText().equals("Map")) {
+                   if(!mapFragment.isAdded()) {
+                       fragmentManager.beginTransaction()
+                               .hide(chartFragment)
+
+                               .add(R.id.picker_layout, mapFragment, "Map")
+                               .commit();
+                   }
+                   else{
+                       fragmentManager.beginTransaction()
+                               .hide(chartFragment)
+                               .show(mapFragment)
+                               .commit();
+
+                   }
+
+
+
                 }
                 if (tab.getText().equals("Pick")) {
-                    fragmentManager.beginTransaction().remove(mapFragment).commit();
-                    fragmentManager.beginTransaction().add(R.id.picker_layout, chartFragment, "Pick").commit();
+                    fragmentManager.beginTransaction()
+                            .hide(mapFragment)
+                            .show(chartFragment)
+                            .commit();
                 }
             }
 

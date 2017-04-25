@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Toast;
 
@@ -83,6 +84,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
             @Override
             public void onResult(@NonNull LocationSettingsResult result) {
                 final Status status = result.getStatus();
+
                 switch (status.getStatusCode()) {
                     case LocationSettingsStatusCodes.SUCCESS:
                         // All location settings are satisfied. The client can
@@ -188,15 +190,15 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
     }
 
     private void handleSignInResult(GoogleSignInResult result) {
-
-        if (result.isSuccess()) {
+        Log.d("loginResult",result+"");
+          if (result.isSuccess()) {
             acct = result.getSignInAccount();
             Intent intent = new Intent(LoginActivity.this,ChoseActivity.class);
             startActivity(intent);
-        } else {
-            Toast.makeText(this, "Login failed!", Toast.LENGTH_SHORT).show();
+          } else {
+              Toast.makeText(this, "Login failed!", Toast.LENGTH_SHORT).show();
 
-        }
+          }
     }
         @Override
     public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
