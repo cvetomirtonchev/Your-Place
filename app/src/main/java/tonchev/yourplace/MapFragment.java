@@ -1,6 +1,5 @@
 package tonchev.yourplace;
 
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
@@ -190,10 +189,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 //        update location
 
         locMan = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
-        locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 30000, 100, (LocationListener) this);
-
-        locMan = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
         locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 100, (LocationListener) this);
+
+//        locMan = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+//        locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 100, (LocationListener) this);
 
         mMap.setMyLocationEnabled(true);
           if (location!=null) {
@@ -291,8 +290,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         protected ArrayList<tonchev.yourplace.modul.Place> doInBackground(Void... params) {
-//            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+location.latitude + "," + location.longitude+"&radius=2000&sensor=true&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
-            String request = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+ChoseActivity.selection+"&location="+location.latitude + "," + location.longitude+"&radius=2000&sensor=true&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";
+            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+location.latitude + "," + location.longitude+"&radius=2000&sensor=true&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
+//            String request = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+ChoseActivity.selection+"&location="+location.latitude + "," + location.longitude+"&radius=2000&sensor=true&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";
 
             try {
                 URL url = new URL(request);
@@ -408,7 +407,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                     int distanceVal = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("distance").getInt("value");
                     String distanceMinute = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getString("text");
                     int timeVal = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getInt("value");
-                    String adress = jsonObject2.getJSONArray("destination_addresses").toString();
                     Log.d("testdi", jsonObject2.toString());
 
                     returnedPlaces.get(i).setDistance(distanceKm);
@@ -461,7 +459,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                         temp.setPhoneNumber(phone);
                         String webAddress = jsonObject.getJSONObject("result").optString("website");
                         temp.setWebAdress(webAddress);
-                        String address = jsonObject.getJSONObject("result").optString("vicinity");
+                        String address = jsonObject.getJSONObject("result").optString("formatted_address");
                         temp.setAdress(address);
                         Log.d("akostane", "" + jsonObject.toString());
                     }
