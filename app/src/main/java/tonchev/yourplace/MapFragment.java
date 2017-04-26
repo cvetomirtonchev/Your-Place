@@ -487,6 +487,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                     e.printStackTrace();
                 } catch (JSONException e) {
                     e.printStackTrace();
+                }catch (IllegalArgumentException e){
+                    e.printStackTrace();
                 }
             }
             return null;
