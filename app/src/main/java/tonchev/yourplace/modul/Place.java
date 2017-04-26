@@ -4,6 +4,7 @@ package tonchev.yourplace.modul;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 /**
  * Created by Цветомир on 2.4.2017 г..
@@ -29,6 +30,7 @@ public class Place implements Comparable<Place>,Serializable {
     private String distanceTime;
     private int distValue;
     private int timeValue;
+    private ArrayList<Comment> comments = new ArrayList<>();
 
     public Place() {
     }
@@ -176,5 +178,9 @@ public class Place implements Comparable<Place>,Serializable {
 
     public void setTimeValue(int timeValue) {
         this.timeValue = timeValue;
+    }
+
+    public ArrayList<Comment> getComments() {
+        return comments;
     }
 }

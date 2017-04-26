@@ -48,6 +48,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Scanner;
 
+import tonchev.yourplace.modul.Comment;
+
 import static android.content.Context.LOCATION_SERVICE;
 import static tonchev.yourplace.ChoseActivity.location;
 import static tonchev.yourplace.ChoseActivity.setRadius;
@@ -455,8 +457,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                     }
                     Log.d("akostane", "" + result.toString());
                     JSONObject jsonObject = new JSONObject(result.toString());
-                    if (jsonObject.has("result")) {
 
+                    if (jsonObject.has("result")) {
+                        JSONArray comments = jsonObject.getJSONObject("result").getJSONArray("reviews");
+
+                        if (comments!=null) {
+                            for (int j = 0; j < comments.length(); j++) {
+                                String user = comments.getJSONObject(j).getString("author_name");
+                                String review = comments.getJSONObject(j).getString("text");
+                                String rating = comments.getJSONObject(j).getString("rating");
+                                Comment comm = new Comment(user, review, rating);
+                                temp.getComments().add(comm);
+                                Log.d("comentari", "Name: " + temp.getComments().get(j).getUser() + "  text: " + temp.getComments().get(j).getText() + "  rating: " + temp.getComments().get(j).getRating());
+                            }
+
+                        }
 
 
                         String phone = jsonObject.getJSONObject("result").optString("formatted_phone_number");
@@ -493,8 +508,5 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
             }
         }
     }
-
-
-
 
 }
