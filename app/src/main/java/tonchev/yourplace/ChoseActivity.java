@@ -245,10 +245,10 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
 
     }
 
-    @Override
-    public void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
-    }
+//    @Override
+//    public void onStop() {
+//        mGoogleApiClient.disconnect();
+//        super.onStop();
+//    }
 
 }

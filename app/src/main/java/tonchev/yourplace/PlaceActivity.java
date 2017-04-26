@@ -78,16 +78,27 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
 
         if (getIntent().getSerializableExtra("mqsto") != null) {
             place = (Place) getIntent().getSerializableExtra("mqsto");
-            name.setText(place.getName());
-            ratingBar.setRating(Float.parseFloat(place.getRating()));
-            placeRating.setText(place.getRating());
-            adress.setText("Address: " + place.getAdress());
-
-            if(place.getOpenNow()==null) {
-                openNow.setText("Open now: N/A");
+            if (place.getName() != null) {
+                name.setText(place.getName());
+            }
+            if (place.getRating()!=null) {
+                try {
+                    ratingBar.setRating(Float.parseFloat(place.getRating()));
+                    placeRating.setText(place.getRating());
+                } catch (NumberFormatException e) {
+                    placeRating.setText("N/A");
+                }
+            } else{
+                placeRating.setText("N/A");
+            }
+            if (place.getAdress()!=null) {
+                adress.setText("Address: " + place.getAdress());
+            }
+            if(place.getOpenNow()!=null) {
+                openNow.setText("Open now: " + place.getOpenNow());
             }
             else{
-                openNow.setText("Open now: " + place.getOpenNow());
+                openNow.setText("Open now: N/A");
             }
             if(getIntent().getExtras().getDoubleArray("LL")!= null) {
                 double[] coord = getIntent().getExtras().getDoubleArray("LL");
@@ -98,7 +109,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
             call.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(place.getPhoneNumber()!=null) {
+                    if(place.getPhoneNumber()!=null && !place.getPhoneNumber().isEmpty()) {
                         String phone = place.getPhoneNumber();
                         Intent intent = new Intent(Intent.ACTION_CALL, Uri.parse("tel:" + phone));
                         if (ActivityCompat.checkSelfPermission(PlaceActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
@@ -119,11 +130,13 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
 
                 }
             });
+            Log.d("placeweb", "web: " + place.getWebAdress() + " phone: " + place.getPhoneNumber());
             webAdress.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if(place.getWebAdress()!=null) {
+                    if(place.getWebAdress()!=null && !place.getWebAdress().isEmpty()) {
                         String url = place.getWebAdress();
+
                         Intent i = new Intent(Intent.ACTION_VIEW);
                         i.setData(Uri.parse(url));
                         startActivity(i);
