@@ -7,6 +7,7 @@ package tonchev.yourplace.modul;
 public class Coment {
     private User user;
     private String text;
+    
 
     public Coment(User user, String text) {
         this.user = user;
