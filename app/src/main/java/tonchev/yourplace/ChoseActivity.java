@@ -45,6 +45,7 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
     public static TabLayout nTabLayout;
     public static String selection;
     public static LatLng location;
+    public static int setRadius;
 
     PlaceAutocompleteFragment searchBar;
 
@@ -99,22 +100,17 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
                if (tab.getText().equals("Map")) {
                    if(!mapFragment.isAdded()) {
                        fragmentManager.beginTransaction()
-                               .hide(chartFragment)
+                               .remove(chartFragment)
                                .add(R.id.picker_layout, mapFragment, "Map")
                                .commit();
                    }
-                   else{
-                       fragmentManager.beginTransaction()
-                               .hide(chartFragment)
-                               .show(mapFragment)
-                               .commit();
 
-                   }
-               }
+                }
+
                 if (tab.getText().equals("Pick")) {
                     fragmentManager.beginTransaction()
-                            .hide(mapFragment)
-                            .show(chartFragment)
+                            .remove(mapFragment)
+                            .add(R.id.picker_layout, chartFragment, "Pick")
                             .commit();
                 }
             }
@@ -250,10 +246,10 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
 
     }
 
-    @Override
-    public void onStop() {
-        mGoogleApiClient.disconnect();
-        super.onStop();
-    }
+//    @Override
+//    public void onStop() {
+//        mGoogleApiClient.disconnect();
+//        super.onStop();
+//    }
 
 }

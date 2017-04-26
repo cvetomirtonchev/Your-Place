@@ -50,6 +50,7 @@ import java.util.Scanner;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static tonchev.yourplace.ChoseActivity.location;
+import static tonchev.yourplace.ChoseActivity.setRadius;
 
 
 /**
@@ -290,8 +291,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
         @Override
         protected ArrayList<tonchev.yourplace.modul.Place> doInBackground(Void... params) {
-            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+location.latitude + "," + location.longitude+"&radius=2000&sensor=true&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
-//            String request = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+ChoseActivity.selection+"&location="+location.latitude + "," + location.longitude+"&radius=2000&sensor=true&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";
+//            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+location.latitude + "," + location.longitude+"&radius=2000&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
+
+            String request = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+ChoseActivity.selection+"&location="+location.latitude + "," + location.longitude+"&radius=1000&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";
 
             try {
                 URL url = new URL(request);
@@ -345,7 +347,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                                     poi.setCategory(typesArray.getString(j) + ", " + poi.getCategory());
                                 }
                             }
-
+                        Log.d("vasko", "id:" + poi.getId());
                         returnedPlaces.add(poi);
 
                     }
@@ -362,20 +364,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         }
         //process data retrieved from doInBackground
         protected void onPostExecute(ArrayList<tonchev.yourplace.modul.Place> returnedPlaces) {
-
-            Log.d("test", "Size" + returnedPlaces.size());
-            for (int i = 0; i < returnedPlaces.size(); i++) {
-                tonchev.yourplace.modul.Place temp = returnedPlaces.get(i);
-                Log.d("resplac", returnedPlaces.get(i).getName() + " open now: " + returnedPlaces.get(i).getOpenNow() + " rating: " + returnedPlaces.get(i).getRating());
-
-                Marker newPlace = mMap.addMarker(new MarkerOptions()
-                        .position(temp.getLatLng())
-                        .title(temp.getName())
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                        .alpha(0.4f)
-                        .flat(true));
-                newPlace.setTag(temp);
-            }
             new GetDistance().execute();
         }
 
@@ -409,12 +397,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                     int timeVal = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getInt("value");
                     String address = jsonObject2.getString("destination_addresses");
                     Log.d("testdi", jsonObject2.toString());
-
-                    returnedPlaces.get(i).setDistance(distanceKm);
-                    returnedPlaces.get(i).setDistanceTime(distanceMinute);
-                    returnedPlaces.get(i).setDistValue(distanceVal);
-                    returnedPlaces.get(i).setTimeValue(timeVal);
-                    returnedPlaces.get(i).setAdress(address);
+                    if(!returnedPlaces.isEmpty()) {
+                        returnedPlaces.get(i).setDistance(distanceKm);
+                        returnedPlaces.get(i).setDistanceTime(distanceMinute);
+                        returnedPlaces.get(i).setDistValue(distanceVal);
+                        returnedPlaces.get(i).setTimeValue(timeVal);
+                    }
+//                    returnedPlaces.get(i).setAdress(address);
                 } catch (ProtocolException e) {
                     e.printStackTrace();
                 } catch (MalformedURLException e) {
@@ -430,7 +419,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            new GetDetails().execute();
+            ArrayList<tonchev.yourplace.modul.Place> notInRadius = new ArrayList<>();
+            for (tonchev.yourplace.modul.Place p : returnedPlaces) {
+                if (p.getDistValue()>setRadius) {
+                    notInRadius.add(p);
+                }
+            }
+            returnedPlaces.removeAll(notInRadius);
+
+                new GetDetails().execute();
         }
     }
 
@@ -465,8 +462,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                         temp.setPhoneNumber(phone);
                         String webAddress = jsonObject.getJSONObject("result").optString("website");
                         temp.setWebAdress(webAddress);
-//                        String address = jsonObject.getJSONObject("result").optString("formatted_address");
-//                        temp.setAdress(address);
+                        String address = jsonObject.getJSONObject("result").optString("vicinity");
+                        temp.setAdress(address);
                     }
                 } catch (MalformedURLException e) {
                     e.printStackTrace();
@@ -479,6 +476,24 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
             return null;
         }
 
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            for (int i = 0; i < returnedPlaces.size(); i++) {
+                tonchev.yourplace.modul.Place temp = returnedPlaces.get(i);
+                Log.d("resplac", returnedPlaces.get(i).getName() + " open now: " + returnedPlaces.get(i).getOpenNow() + " rating: " + returnedPlaces.get(i).getRating());
+
+                Marker newPlace = mMap.addMarker(new MarkerOptions()
+                        .position(temp.getLatLng())
+                        .title(temp.getName())
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                        .alpha(0.4f)
+                        .flat(true));
+                newPlace.setTag(temp);
+            }
+        }
     }
+
+
+
 
 }

@@ -7,6 +7,8 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
@@ -30,14 +32,22 @@ import static tonchev.yourplace.ChoseActivity.*;
 public class PickFragment extends Fragment {
 
 
+    public static final int MIN_RADIUS = 1000;
     private PieChart chart;
     private float[]yData ={10.5f,10.5f,10.5f,10.5f,10.5f};
     private String[]xData ={"BARS","ATMS","CASINOS","HOTELS","CLUBS"};
+    private SeekBar seekBar;
+    private TextView radius;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
        View root = inflater.inflate(R.layout.fragment_pick, container, false);
+
+        seekBar = (SeekBar) root.findViewById(R.id.seek_bar);
+        radius = (TextView) root.findViewById(R.id.set_radius);
+        setRadius = MIN_RADIUS;
+
         chart = (PieChart) root.findViewById(R.id.chart);
         chart.setRotationEnabled(false);
         chart.setHoleRadius(25f);
@@ -79,6 +89,25 @@ public class PickFragment extends Fragment {
         //chart.setCenterTextSize(10);
        // chart.setDrawEntryLabels(true);
         addDataSet();
+
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                setRadius = progress*100 + MIN_RADIUS;
+                radius.setText(setRadius + "m" );
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+                radius.setVisibility(View.VISIBLE);
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                radius.setVisibility(View.GONE);
+            }
+        });
         return root;
     }
 
