@@ -293,7 +293,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         protected ArrayList<tonchev.yourplace.modul.Place> doInBackground(Void... params) {
 //            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+location.latitude + "," + location.longitude+"&radius=2000&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
 
-            String request = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+ChoseActivity.selection+"&location="+location.latitude + "," + location.longitude+"&radius=2000&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";
+            String request = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+ChoseActivity.selection+"&location="+location.latitude + "," + location.longitude+"&radius=1000&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";
 
             try {
                 URL url = new URL(request);
@@ -347,7 +347,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                                     poi.setCategory(typesArray.getString(j) + ", " + poi.getCategory());
                                 }
                             }
-
+                        Log.d("vasko", "id:" + poi.getId());
                         returnedPlaces.add(poi);
 
                     }
@@ -416,7 +416,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                     returnedPlaces.get(i).setDistanceTime(distanceMinute);
                     returnedPlaces.get(i).setDistValue(distanceVal);
                     returnedPlaces.get(i).setTimeValue(timeVal);
-                    returnedPlaces.get(i).setAdress(address);
+//                    returnedPlaces.get(i).setAdress(address);
                 } catch (ProtocolException e) {
                     e.printStackTrace();
                 } catch (MalformedURLException e) {
@@ -472,8 +472,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                         temp.setPhoneNumber(phone);
                         String webAddress = jsonObject.getJSONObject("result").optString("website");
                         temp.setWebAdress(webAddress);
-//                        String address = jsonObject.getJSONObject("result").optString("formatted_address");
-//                        temp.setAdress(address);
+                        String address = jsonObject.getJSONObject("result").optString("vicinity");
+                        temp.setAdress(address);
                     }
                 } catch (MalformedURLException e) {
                     e.printStackTrace();

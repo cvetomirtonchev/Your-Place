@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -148,6 +149,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
        }
         if (getIntent().getExtras().getString("ID")!= null){
            placeID = getIntent().getExtras().getString("ID");
+            Log.d("placeid", "id:" + placeID);
        }
 
 
@@ -220,7 +222,6 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
                                             .getScaledPhoto(mGoogleApiClient2, firstImage.getWidth(),
                                                     firstImage.getHeight())
                                             .setResultCallback(mDisplayPhotoResultCallback);
-
                                 }
                             }
                         });
