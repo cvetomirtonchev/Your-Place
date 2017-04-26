@@ -445,6 +445,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                 tonchev.yourplace.modul.Place temp = returnedPlaces.get(i);
                 String placeID = temp.getId();
                 String request = "https://maps.googleapis.com/maps/api/place/details/json?placeid=" + placeID + "&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";
+                //AIzaSyC5kPaJ2sfQvnqINcskPKDxDmrgfsQ9ACk
+                //AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY
                 try {
                     URL url = new URL(request);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -457,6 +459,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                     Log.d("akostane", "" + result.toString());
                     JSONObject jsonObject = new JSONObject(result.toString());
                     if (jsonObject.has("result")) {
+
 
                         String phone = jsonObject.getJSONObject("result").optString("formatted_phone_number");
                         temp.setPhoneNumber(phone);
