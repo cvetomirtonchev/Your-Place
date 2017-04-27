@@ -2,7 +2,6 @@ package tonchev.yourplace;
 
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.content.res.Resources;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -33,7 +32,6 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MapStyleOptions;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
@@ -52,7 +50,6 @@ import java.util.Scanner;
 
 import tonchev.yourplace.modul.Comment;
 
-import static android.content.ContentValues.TAG;
 import static android.content.Context.LOCATION_SERVICE;
 import static tonchev.yourplace.ChoseActivity.location;
 import static tonchev.yourplace.ChoseActivity.setRadius;
@@ -74,6 +71,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     private Button sortKm;
     private Button sortTime;
     private Button sortOpen;
+    private double[] ll = new double[2];
 
     private Button sortRating;
 
@@ -227,7 +225,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         }
         tonchev.yourplace.modul.Place temp = (tonchev.yourplace.modul.Place) marker.getTag();
         Intent intent = new Intent(getActivity(), PlaceActivity.class );
-        double[] ll = {temp.getLatLng().latitude, temp.getLatLng().longitude};
+        if (temp.getLatLng() == null) {
+            LatLng ltLg = new LatLng(ll[0], ll[1]);
+            temp.setLatLng(ltLg);
+        }
+        ll[0] = temp.getLatLng().latitude;
+        ll[1] = temp.getLatLng().longitude;
         temp.setLatLng(null);
         intent.putExtra("mqsto", temp);
         intent.putExtra("ID", temp.getId());
@@ -300,7 +303,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         protected ArrayList<tonchev.yourplace.modul.Place> doInBackground(Void... params) {
 //            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+location.latitude + "," + location.longitude+"&radius=2000&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
 
-            String request = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+ChoseActivity.selection+"&location="+location.latitude + "," + location.longitude+"&radius=1000&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";
+            String request = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+ChoseActivity.selection+"&location="+location.latitude + "," + location.longitude+"&radius=1000&types="+ChoseActivity.selection+"&key=AIzaSyD_p-9ERNaIcdNGwFOc2OJfo-4R1__d9TU";
 
             try {
                 URL url = new URL(request);
@@ -384,7 +387,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
             LatLng placeLatLng;
             for (int i = 0; i < returnedPlaces.size(); i ++) {
                 placeLatLng = returnedPlaces.get(i).getLatLng();
-                distanceRequest = "https://maps.googleapis.com/maps/api/distancematrix/json?origins="+location.latitude+","+location.longitude+"&destinations="+placeLatLng.latitude+"%2C"+placeLatLng.longitude+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";
+                distanceRequest = "https://maps.googleapis.com/maps/api/distancematrix/json?origins="+location.latitude+","+location.longitude+"&destinations="+placeLatLng.latitude+"%2C"+placeLatLng.longitude+"&key=AIzaSyD_p-9ERNaIcdNGwFOc2OJfo-4R1__d9TU";
                 try {
                     URL url2 = new URL(distanceRequest);
                     HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
@@ -448,9 +451,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
             for (int i = 0; i < returnedPlaces.size(); i ++) {
                 tonchev.yourplace.modul.Place temp = returnedPlaces.get(i);
                 String placeID = temp.getId();
-                String request = "https://maps.googleapis.com/maps/api/place/details/json?placeid=" + placeID + "&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";
+                String request = "https://maps.googleapis.com/maps/api/place/details/json?placeid=" + placeID + "&key=AIzaSyD_p-9ERNaIcdNGwFOc2OJfo-4R1__d9TU";
                 //AIzaSyC5kPaJ2sfQvnqINcskPKDxDmrgfsQ9ACk
                 //AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY
+                //serverkey: AIzaSyAbDm9W9flFxQZlAQVt1KSYnTBN1HEBHEM
                 try {
                     URL url = new URL(request);
                     HttpURLConnection connection = (HttpURLConnection) url.openConnection();
