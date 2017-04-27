@@ -123,7 +123,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
                 commentsView.setAdapter(commentAdapter);
                 commentsView.setLayoutManager(new GridLayoutManager(this, 1, LinearLayoutManager.HORIZONTAL, false));
             }else{
-                new GetDetails().execute();
+                new GetComments().execute();
 
             }
 
@@ -364,7 +364,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
         }
     }
 
-    private class GetDetails extends AsyncTask<Void, Void, Void> {
+    private class GetComments extends AsyncTask<Void, Void, Void> {
 
 
         @Override
