@@ -170,9 +170,6 @@ public class ChoseActivity extends AppCompatActivity implements OnNavigationItem
                 intent.putExtra("ID", place.getId());
                 intent.putExtra("LL",ll);
                 startActivity(intent);
-
-
-
             }
 
             @Override

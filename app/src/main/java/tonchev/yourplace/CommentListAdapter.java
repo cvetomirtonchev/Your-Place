@@ -18,8 +18,7 @@ import tonchev.yourplace.modul.Comment;
 
 public class CommentListAdapter extends RecyclerView.Adapter<CommentListAdapter.MyViewHolder> {
     private Context context;
-    private ArrayList<Comment> comments;
-    private Comment comment;
+    private ArrayList<Comment> comments;;
 
 
     public CommentListAdapter(Context context, ArrayList<Comment> comments) {
@@ -48,10 +47,6 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentListAdapter.
             holder.ratingBar.setRating(0.0f);
             holder.rating.setText("N/A");
         }
-
-
-
-
     }
 
     @Override
@@ -75,8 +70,6 @@ public class CommentListAdapter extends RecyclerView.Adapter<CommentListAdapter.
             name = (TextView) row.findViewById(R.id.comment_view_autor);
             rating = (TextView) row.findViewById(R.id.comment_view_rating);
             review = (TextView) row.findViewById(R.id.comment_view_text);
-
-
         }
     }
 }

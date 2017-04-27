@@ -40,12 +40,14 @@
             android:id="@+id/vlizane"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Login2"/>
+            android:text="Login"
+            android:visibility="gone"/>
 
         <com.google.android.gms.common.SignInButton
             android:id="@+id/sign_in_button"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            android:layout_height="wrap_content"
+            />
 
 
     </LinearLayout>

@@ -130,16 +130,7 @@
 
         </LinearLayout>
 
-        <TextView
-            android:id="@+id/activity_place_open_now"
-            android:layout_width="0dp"
-            android:layout_weight="1"
-            android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:gravity="end"
-            android:text="Open now:"
-            android:textColor="@color/goldenTransperent"
-            />
+
 
     </LinearLayout>
 
@@ -160,9 +151,18 @@
                 android:id="@+id/activity_place_adress"
                 android:layout_width="wrap_content"
                 android:layout_height="0dp"
-                android:layout_weight="3"
-                android:text="Adress:"
+                android:layout_weight="2"
+                android:text="Address:"
                 android:textSize="20sp"/>
+            <TextView
+                android:id="@+id/activity_place_open_now"
+                android:textColor="@android:color/black"
+                android:layout_width="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                android:text="Open now:"
+                android:textSize="20sp"
+                />
             <TextView
                 android:textColor="@android:color/black"
                 android:textSize="20sp"
@@ -192,19 +192,23 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        android:layout_weight="1"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp">
 
         <Button
             android:id="@+id/activity_place_call"
             android:layout_width="0dp"
             android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
             android:background="@drawable/call_icon"/>
 
         <Button
             android:id="@+id/activity_place_web"
             android:layout_width="0dp"
             android:layout_weight="1"
+            android:layout_marginRight="16dp"
             android:layout_height="match_parent"
             android:background="@drawable/web_icon_3"/>
 
@@ -217,8 +221,10 @@
             android:visibility="gone"/>
         <Button
             android:id="@+id/activity_place_direction_button"
-            android:layout_width="wrap_content"
+            android:layout_width="0dp"
+            android:layout_weight="1"
             android:layout_height="wrap_content"
+            android:layout_marginRight="16dp"
             android:text="direction"
             android:background="@drawable/googlemaps"/>
 

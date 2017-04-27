@@ -93,7 +93,7 @@ public class PickFragment extends Fragment {
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
-                setRadius = progress*100 + MIN_RADIUS;
+                setRadius = progress*200 + MIN_RADIUS;
                 radius.setText(setRadius + "m" );
             }
 
