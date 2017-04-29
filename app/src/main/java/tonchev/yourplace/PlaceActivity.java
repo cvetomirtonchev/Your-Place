@@ -64,7 +64,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
     private Button priviusButton;
     private Button nextButton;
     private TextView openNow;
-    private boolean slideShowed;
+    private volatile boolean slideShowed;
     private RecyclerView commentsView;
 
 
