@@ -76,7 +76,7 @@ public class PickFragment extends Fragment {
                         selection="hotel";
                         break;
                     case 4:
-                        selection="club";
+                        selection="night_club";
                         break;
                 }
                 TabLayout.Tab tab =  nTabLayout.getTabAt(1);
