@@ -122,7 +122,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
             if(!place.getComments().isEmpty()) {
                 CommentListAdapter commentAdapter = new CommentListAdapter(this, place.getComments());
                 commentsView.setAdapter(commentAdapter);
-                commentsView.setLayoutManager(new GridLayoutManager(this, 1, LinearLayoutManager.HORIZONTAL, false));
+                commentsView.setLayoutManager(new GridLayoutManager(this, 1, LinearLayoutManager.VERTICAL, false));
             }else{
                 new GetComments().execute();
 
