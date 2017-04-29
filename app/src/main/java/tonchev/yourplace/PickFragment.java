@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.Entry;
@@ -22,6 +23,8 @@ import com.github.mikephil.charting.utils.ViewPortHandler;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+
+import tonchev.yourplace.modul.MyConnectionChecker;
 
 import static tonchev.yourplace.ChoseActivity.*;
 
@@ -77,7 +80,13 @@ public class PickFragment extends Fragment {
                         break;
                 }
                 TabLayout.Tab tab =  nTabLayout.getTabAt(1);
-                tab.select();
+                if(!MyConnectionChecker.haveNetworkConnection(getActivity())) {
+                    Toast.makeText(getActivity(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    tab.select();
+
+                }
             }
 
             @Override

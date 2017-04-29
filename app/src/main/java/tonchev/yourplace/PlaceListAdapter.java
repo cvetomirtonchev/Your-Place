@@ -8,11 +8,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.RatingBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
 
+import tonchev.yourplace.modul.MyConnectionChecker;
 import tonchev.yourplace.modul.Place;
 
 /**
@@ -59,25 +61,31 @@ public class PlaceListAdapter extends RecyclerView.Adapter<PlaceListAdapter.MyVi
         holder.row.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String clickedName = holder.name.getText().toString();
-                for (tonchev.yourplace.modul.Place p : places) {
-                    if (clickedName.equals(p.getName())) {
-                        temp = p;
-                        break;
+                if(!MyConnectionChecker.haveNetworkConnection(context)) {
+                    Toast.makeText(context, "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    String clickedName = holder.name.getText().toString();
+                    for (tonchev.yourplace.modul.Place p : places) {
+                        if (clickedName.equals(p.getName())) {
+                            temp = p;
+                            break;
+                        }
                     }
+                    Intent intent = new Intent(context, PlaceActivity.class);
+                    if (temp.getLatLng() == null) {
+                        LatLng ltLg = new LatLng(ll[0], ll[1]);
+                        temp.setLatLng(ltLg);
+                    }
+                    ll[0] = temp.getLatLng().latitude;
+                    ll[1] = temp.getLatLng().longitude;
+                    temp.setLatLng(null);
+                    intent.putExtra("mqsto", temp);
+                    intent.putExtra("ID", temp.getId());
+                    intent.putExtra("LL", ll);
+
+                    context.startActivity(intent);
                 }
-                Intent intent = new Intent(context, PlaceActivity.class );
-                if (temp.getLatLng() == null) {
-                    LatLng ltLg = new LatLng(ll[0], ll[1]);
-                    temp.setLatLng(ltLg);
-                }
-                ll[0] = temp.getLatLng().latitude;
-                ll[1] = temp.getLatLng().longitude;
-                temp.setLatLng(null);
-                intent.putExtra("mqsto", temp);
-                intent.putExtra("ID", temp.getId());
-                intent.putExtra("LL",ll);
-                context.startActivity(intent);
             }
         });
 

@@ -39,6 +39,7 @@ import java.net.URL;
 import java.util.Scanner;
 
 import tonchev.yourplace.modul.Comment;
+import tonchev.yourplace.modul.MyConnectionChecker;
 import tonchev.yourplace.modul.Place;
 
 
@@ -154,14 +155,19 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
             webAdress.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    if (place.getWebAdress() != null && !place.getWebAdress().isEmpty()) {
-                        String url = place.getWebAdress();
+                    if(!MyConnectionChecker.haveNetworkConnection(PlaceActivity.this)) {
+                        Toast.makeText(PlaceActivity.this, "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        if (place.getWebAdress() != null && !place.getWebAdress().isEmpty()) {
+                            String url = place.getWebAdress();
 
-                        Intent i = new Intent(Intent.ACTION_VIEW);
-                        i.setData(Uri.parse(url));
-                        startActivity(i);
-                    } else {
-                        Toast.makeText(PlaceActivity.this, "Sorry, we don't have web page.", Toast.LENGTH_SHORT).show();
+                            Intent i = new Intent(Intent.ACTION_VIEW);
+                            i.setData(Uri.parse(url));
+                            startActivity(i);
+                        } else {
+                            Toast.makeText(PlaceActivity.this, "Sorry, we don't have web page.", Toast.LENGTH_SHORT).show();
+                        }
                     }
 
                 }
@@ -396,9 +402,7 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
                             place.getComments().add(comm);
                             Log.d("comentari", "Name: " + place.getComments().get(j).getUser() + "  text: " + place.getComments().get(j).getText() + "  rating: " + place.getComments().get(j).getRating());
                         }
-
                     }
-
                 }
             } catch (MalformedURLException e) {
                 e.printStackTrace();
