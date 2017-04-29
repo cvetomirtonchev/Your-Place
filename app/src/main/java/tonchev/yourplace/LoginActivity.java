@@ -32,6 +32,8 @@ import com.google.android.gms.location.LocationSettingsResult;
 import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.maps.model.LatLng;
 
+import tonchev.yourplace.modul.MyConnectionChecker;
+
 import static android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS;
 import static com.google.android.gms.common.api.GoogleApiClient.Builder;
 import static com.google.android.gms.common.api.GoogleApiClient.ConnectionCallbacks;
@@ -105,7 +107,13 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                  signIn();
+                if(!MyConnectionChecker.haveNetworkConnection(LoginActivity.this)) {
+                    Toast.makeText(LoginActivity.this, "Please check your internet connection", Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    signIn();
+                }
+
             }
         });
 
@@ -127,10 +135,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                         // All location settings are satisfied. The client can
                         // initialize location requests here.
 
-//                                mLocationRequest.setInterval(10000);
-//                                mLocationRequest.setFastestInterval(5000);
                         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-                        Toast.makeText(LoginActivity.this, "Location services are on!", Toast.LENGTH_SHORT).show();
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
                         // Location settings are not satisfied, but this can be fixed

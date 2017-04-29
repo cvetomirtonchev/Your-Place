@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
@@ -49,6 +50,7 @@ import java.util.Collections;
 import java.util.Scanner;
 
 import tonchev.yourplace.modul.Comment;
+import tonchev.yourplace.modul.MyConnectionChecker;
 
 import static android.content.Context.LOCATION_SERVICE;
 import static tonchev.yourplace.ChoseActivity.location;
@@ -221,6 +223,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     @Override
     public boolean onMarkerClick(Marker marker) {
         if(marker.getTitle().equals("You are here")) {
+            return false;
+        }
+        if(!MyConnectionChecker.haveNetworkConnection(getActivity())) {
+            Toast.makeText(getActivity(), "Please check your internet connection", Toast.LENGTH_SHORT).show();
             return false;
         }
         tonchev.yourplace.modul.Place temp = (tonchev.yourplace.modul.Place) marker.getTag();
@@ -481,7 +487,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                             }
 
                         }
-
 
                         String phone = jsonObject.getJSONObject("result").optString("formatted_phone_number");
                         temp.setPhoneNumber(phone);
