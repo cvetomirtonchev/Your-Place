@@ -61,7 +61,7 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
         // Acquire a reference to the system Location Manager
         locationManager = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
 
-// Define a listener that responds to location updates
+        // Define a listener that responds to location updates
         locationListener = new LocationListener() {
             public void onLocationChanged(Location loc) {
                 // Called when a new location is found by the network location provider.
@@ -134,7 +134,6 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                     case LocationSettingsStatusCodes.SUCCESS:
                         // All location settings are satisfied. The client can
                         // initialize location requests here.
-
                         mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
                         break;
                     case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
@@ -179,8 +178,6 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
                                 // All location settings are satisfied. The client can
                                 // initialize location requests here.
 
-//                                mLocationRequest.setInterval(10000);
-//                                mLocationRequest.setFastestInterval(5000);
                                 mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
                                 startActivity(new Intent(LoginActivity.this,ChoseActivity.class));
                                 break;
@@ -272,25 +269,6 @@ public class LoginActivity extends AppCompatActivity implements OnConnectionFail
 
     }
 
-//    @Override
-//    public void onLocationChanged(Location loc) {
-//        location = new LatLng(loc.getLatitude(), loc.getLongitude());
-//    }
-//
-//    @Override
-//    public void onStatusChanged(String provider, int status, Bundle extras) {
-//
-//    }
-//
-//    @Override
-//    public void onProviderEnabled(String provider) {
-//
-//    }
-//
-//    @Override
-//    public void onProviderDisabled(String provider) {
-//
-//    }
     protected void onStart() {
         mGoogleApiClient.connect();
         super.onStart();

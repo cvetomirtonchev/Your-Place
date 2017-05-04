@@ -94,9 +94,6 @@ public class PickFragment extends Fragment {
 
             }
         });
-        //chart.setCenterText("");
-        //chart.setCenterTextSize(10);
-       // chart.setDrawEntryLabels(true);
         addDataSet();
 
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
@@ -130,9 +127,9 @@ public class PickFragment extends Fragment {
             xEntrys.add(xData[i]);
         }
         PieDataSet pieDataSet = new PieDataSet(yEntrys,"Pick Entry");
-        // distanciqta mejdu razrezikite
+        // Distance between parts
         pieDataSet.setSliceSpace(2);
-        // Kolko da e golqm teksta vutre
+        // Text size
         pieDataSet.setValueTextColor(R.color.golden);
         pieDataSet.setValueTextSize(12);
         pieDataSet.setColor(R.color.blueTransperent);

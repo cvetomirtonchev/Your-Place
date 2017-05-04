@@ -13,10 +13,6 @@ import java.util.ArrayList;
 public class Place implements Comparable<Place>,Serializable {
 
 
-
-//    public enum Type {CLUB,BAR,HOTEl,ATM,CASIONO}
-
-//    private Type type;
     private String id;
     private String name;
     private String adress;

@@ -55,15 +55,10 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
     private Button call;
     private Button direction;
     private Button webAdress;
-    private Button savePlace;
     private TextView adress;
     private static int counterPhotos = 0;
     private ImageView secondImage;
     private ImageView thirdImage;
-    private boolean isClicked1;
-    private boolean isClicked2;
-    private Button priviusButton;
-    private Button nextButton;
     private TextView openNow;
     private volatile boolean slideShowed;
     private RecyclerView commentsView;
@@ -77,7 +72,6 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
         call = (Button) findViewById(R.id.activity_place_call);
         direction = (Button) findViewById(R.id.activity_place_direction_button);
         webAdress = (Button) findViewById(R.id.activity_place_web);
-        savePlace = (Button) findViewById(R.id.activity_place_save);
         name = (TextView) findViewById(R.id.activity_place_name);
         openNow = (TextView) findViewById(R.id.activity_place_open_now);
         firstImage = (ImageView) findViewById(R.id.image_v1);
@@ -86,8 +80,6 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
         adress = (TextView) findViewById(R.id.activity_place_adress);
         secondImage = (ImageView) findViewById(R.id.image_v2);
         thirdImage = (ImageView) findViewById(R.id.image_v3);
-        priviusButton = (Button) findViewById(R.id.place_activity_button_photo_back);
-        nextButton = (Button) findViewById(R.id.place_activity_button_photo_next);
         commentsView = (RecyclerView) findViewById(R.id.comments_recycler_view);
 
 
@@ -202,41 +194,6 @@ public class PlaceActivity extends AppCompatActivity implements GoogleApiClient.
             new PhotoAsyncTask().execute(placeID);
             Log.d("placeIDtest", placeID);
         }
-//        priviusButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                if(isClicked1==true&&isClicked2==false){
-//                    secondImage.setVisibility(View.GONE);
-//                    firstImage.setVisibility(View.VISIBLE);
-//                    isClicked1=false;
-//
-//                }
-//                if(isClicked1==true&&isClicked2==true){
-//                    thirdImage.setVisibility(View.GONE);
-//                    secondImage.setVisibility(View.VISIBLE);
-//                    isClicked2=false;
-//                }
-//            }
-//        });
-//        nextButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//
-//                if(isClicked1==true&&isClicked2==false){
-//                    secondImage.setVisibility(View.GONE);
-//                    thirdImage.setVisibility(View.VISIBLE);
-//                    isClicked2=true;
-//                }
-//                if(isClicked1==false&&isClicked2==false){
-//                    firstImage.setVisibility(View.GONE);
-//                    secondImage.setVisibility(View.VISIBLE);
-//                    isClicked1=true;
-//
-//                }
-//            }
-//        });
-
-
     }
 
     private class PhotoAsyncTask extends AsyncTask<String, Void, Void> {

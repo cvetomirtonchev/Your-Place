@@ -197,11 +197,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 //        update location
 
         locMan = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
-        locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 100, (LocationListener) this);
-
-//        locMan = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-//        locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 100, (LocationListener) this);
-
+        locMan.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 3000, 100, this);
         mMap.setMyLocationEnabled(true);
           if (location!=null) {
             mMap.addMarker(new MarkerOptions().position(location).title("You are here"));
@@ -254,7 +250,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
     public void onLocationChanged(Location location) {
         Log.v("MyMapActivity", "location changed");
         Log.v("Test", "location change block");
-//        updatePlaces();
     }
 
     @Override
@@ -272,36 +267,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         Log.v("MyMapActivity", "provider disabled");
     }
 
-//    private void updatePlaces() {
-//        //get location manager
-//        //get last location
-//        if (ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-//            // TODO: Consider calling
-//            //    ActivityCompat#requestPermissions
-//            // here to request the missing permissions, and then overriding
-//            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-//            //                                          int[] grantResults)
-//            // to handle the case where the user grants the permission. See the documentation
-//            // for ActivityCompat#requestPermissions for more details.
-//            return;
-//        }
-//        Location lastLoc = locMan.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-//        double lat = lastLoc.getLatitude();
-//        double lng = lastLoc.getLongitude();
-//        //create LatLng
-//        LatLng lastLatLng = new LatLng(lat, lng);
-//
-//        //remove any existing marker
-//        if (userMarker != null) userMarker.remove();
-//        //create and set marker properties
-//        userMarker = mMap.addMarker(new MarkerOptions()
-//                .position(lastLatLng)
-//                .title("You are here")
-//                .snippet("Your last recorded location"));
-//        //move to location
-//        mMap.animateCamera(CameraUpdateFactory.newLatLng(lastLatLng), 3000, null);
-//
-//    }
 
     private class GetPlaces extends AsyncTask<Void, Void, ArrayList<tonchev.yourplace.modul.Place>> {
         @RequiresApi(api = Build.VERSION_CODES.KITKAT)
@@ -524,5 +489,4 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
             }
         }
     }
-
 }
