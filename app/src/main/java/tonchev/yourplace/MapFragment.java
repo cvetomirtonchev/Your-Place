@@ -43,7 +43,6 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
-import java.net.ProtocolException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -206,6 +205,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
           if(ChoseActivity.selection!=null) {
             returnedPlaces.clear();
             new MapFragment.GetPlaces().execute();
+            new GetDetails().execute();
 
           }
           mMap.setOnMarkerClickListener(this);
@@ -275,7 +275,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 //            String request = "https://maps.googleapis.com/maps/api/place/nearbysearch/json?location="+location.latitude + "," + location.longitude+"&radius=2000&types="+ChoseActivity.selection+"&key=AIzaSyCH1yrshoqnPRvH62XLDQI8PYdAFP-MehY";//ADD KEY
 
             String request = "https://maps.googleapis.com/maps/api/place/textsearch/json?query="+ChoseActivity.selection+"&location="+location.latitude + "," + location.longitude+"&radius=1000&types="+ChoseActivity.selection+"&key=AIzaSyD_p-9ERNaIcdNGwFOc2OJfo-4R1__d9TU";
-
+            String distanceRequest;
             try {
                 URL url = new URL(request);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -329,6 +329,31 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                                 }
                             }
                         Log.d("vasko", "id:" + poi.getId());
+                        distanceRequest = "https://maps.googleapis.com/maps/api/distancematrix/json?origins="+location.latitude+","+location.longitude+"&destinations="+latLng.latitude+"%2C"+latLng.longitude+"&key=AIzaSyD_p-9ERNaIcdNGwFOc2OJfo-4R1__d9TU";
+                        URL url2 = new URL(distanceRequest);
+                        HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
+                        connection2.setRequestMethod("GET");
+                        Scanner sc2 = new Scanner(connection2.getInputStream());
+                        StringBuilder responseDist = new StringBuilder();
+
+                        while (sc2.hasNextLine()) {
+                            responseDist.append(sc2.nextLine());
+                        }
+                        // Get distance and time for obj
+                        JSONObject jsonObject2 = new JSONObject(responseDist.toString());
+
+                        String distanceKm = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("distance").getString("text");
+                        int distanceVal = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("distance").getInt("value");
+                        String distanceMinute = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getString("text");
+                        int timeVal = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getInt("value");
+                        Log.d("testdi", jsonObject2.toString());
+                        poi.setDistance(distanceKm);
+                        poi.setDistanceTime(distanceMinute);
+                        poi.setDistValue(distanceVal);
+                        poi.setTimeValue(timeVal);
+
+
+
                         returnedPlaces.add(poi);
 
                     }
@@ -345,61 +370,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
         }
         //process data retrieved from doInBackground
         protected void onPostExecute(ArrayList<tonchev.yourplace.modul.Place> returnedPlaces) {
-            new GetDistance().execute();
-        }
-
-
-    }
-
-    private class GetDistance extends AsyncTask <Void, Void, Void> {
-        @Override
-        protected Void doInBackground(Void... params) {
-            String distanceRequest;
-            LatLng placeLatLng;
-            for (int i = 0; i < returnedPlaces.size(); i ++) {
-                placeLatLng = returnedPlaces.get(i).getLatLng();
-                distanceRequest = "https://maps.googleapis.com/maps/api/distancematrix/json?origins="+location.latitude+","+location.longitude+"&destinations="+placeLatLng.latitude+"%2C"+placeLatLng.longitude+"&key=AIzaSyD_p-9ERNaIcdNGwFOc2OJfo-4R1__d9TU";
-                try {
-                    URL url2 = new URL(distanceRequest);
-                    HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
-                    connection2.setRequestMethod("GET");
-                    Scanner sc2 = new Scanner(connection2.getInputStream());
-                    StringBuilder responseDist = new StringBuilder();
-
-                    while (sc2.hasNextLine()) {
-                        responseDist.append(sc2.nextLine());
-                    }
-                    // Get distance and time for obj
-                    JSONObject jsonObject2 = new JSONObject(responseDist.toString());
-
-                    String distanceKm = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("distance").getString("text");
-                    int distanceVal = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("distance").getInt("value");
-                    String distanceMinute = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getString("text");
-                    int timeVal = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getInt("value");
-                    String address = jsonObject2.getString("destination_addresses");
-                    Log.d("testdi", jsonObject2.toString());
-                    if(!returnedPlaces.isEmpty()) {
-                        returnedPlaces.get(i).setDistance(distanceKm);
-                        returnedPlaces.get(i).setDistanceTime(distanceMinute);
-                        returnedPlaces.get(i).setDistValue(distanceVal);
-                        returnedPlaces.get(i).setTimeValue(timeVal);
-                    }
-//                    returnedPlaces.get(i).setAdress(address);
-                } catch (ProtocolException e) {
-                    e.printStackTrace();
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            }
-            return null;
-        }
-
-        @Override
-        protected void onPostExecute(Void aVoid) {
             ArrayList<tonchev.yourplace.modul.Place> notInRadius = new ArrayList<>();
             for (tonchev.yourplace.modul.Place p : returnedPlaces) {
                 if (p.getDistValue()>setRadius) {
@@ -407,10 +377,82 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
                 }
             }
             returnedPlaces.removeAll(notInRadius);
+            for (int i = 0; i < returnedPlaces.size(); i++) {
+                tonchev.yourplace.modul.Place temp = returnedPlaces.get(i);
+                Log.d("resplac", returnedPlaces.get(i).getName() + " open now: " + returnedPlaces.get(i).getOpenNow() + " rating: " + returnedPlaces.get(i).getRating());
 
-                new GetDetails().execute();
+                Marker newPlace = mMap.addMarker(new MarkerOptions()
+                        .position(temp.getLatLng())
+                        .title(temp.getName())
+                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+                        .alpha(0.4f)
+                        .flat(true));
+                newPlace.setTag(temp);
+            }
+
+
         }
     }
+
+//    private class GetDistance extends AsyncTask <Void, Void, Void> {
+//        @Override
+//        protected Void doInBackground(Void... params) {
+//            String distanceRequest;
+//            LatLng placeLatLng;
+//            for (int i = 0; i < returnedPlaces.size(); i ++) {
+//                placeLatLng = returnedPlaces.get(i).getLatLng();
+//                distanceRequest = "https://maps.googleapis.com/maps/api/distancematrix/json?origins="+location.latitude+","+location.longitude+"&destinations="+placeLatLng.latitude+"%2C"+placeLatLng.longitude+"&key=AIzaSyD_p-9ERNaIcdNGwFOc2OJfo-4R1__d9TU";
+//                try {
+//                    URL url2 = new URL(distanceRequest);
+//                    HttpURLConnection connection2 = (HttpURLConnection) url2.openConnection();
+//                    connection2.setRequestMethod("GET");
+//                    Scanner sc2 = new Scanner(connection2.getInputStream());
+//                    StringBuilder responseDist = new StringBuilder();
+//
+//                    while (sc2.hasNextLine()) {
+//                        responseDist.append(sc2.nextLine());
+//                    }
+//                    // Get distance and time for obj
+//                    JSONObject jsonObject2 = new JSONObject(responseDist.toString());
+//
+//                    String distanceKm = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("distance").getString("text");
+//                    int distanceVal = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("distance").getInt("value");
+//                    String distanceMinute = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getString("text");
+//                    int timeVal = jsonObject2.getJSONArray("rows").getJSONObject(0).getJSONArray("elements").getJSONObject(0).getJSONObject("duration").getInt("value");
+//                    Log.d("testdi", jsonObject2.toString());
+//                    if(!returnedPlaces.isEmpty()) {
+//                        returnedPlaces.get(i).setDistance(distanceKm);
+//                        returnedPlaces.get(i).setDistanceTime(distanceMinute);
+//                        returnedPlaces.get(i).setDistValue(distanceVal);
+//                        returnedPlaces.get(i).setTimeValue(timeVal);
+//                    }
+////                    returnedPlaces.get(i).setAdress(address);
+//                } catch (ProtocolException e) {
+//                    e.printStackTrace();
+//                } catch (MalformedURLException e) {
+//                    e.printStackTrace();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                } catch (JSONException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            return null;
+//        }
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            ArrayList<tonchev.yourplace.modul.Place> notInRadius = new ArrayList<>();
+//            for (tonchev.yourplace.modul.Place p : returnedPlaces) {
+//                if (p.getDistValue()>setRadius) {
+//                    notInRadius.add(p);
+//                }
+//            }
+//            returnedPlaces.removeAll(notInRadius);
+//
+//                new GetDetails().execute();
+//        }
+//    }
 
     private class GetDetails extends AsyncTask <Void, Void, Void> {
 
@@ -475,18 +517,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, Locatio
 
         @Override
         protected void onPostExecute(Void aVoid) {
-            for (int i = 0; i < returnedPlaces.size(); i++) {
-                tonchev.yourplace.modul.Place temp = returnedPlaces.get(i);
-                Log.d("resplac", returnedPlaces.get(i).getName() + " open now: " + returnedPlaces.get(i).getOpenNow() + " rating: " + returnedPlaces.get(i).getRating());
-
-                Marker newPlace = mMap.addMarker(new MarkerOptions()
-                        .position(temp.getLatLng())
-                        .title(temp.getName())
-                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
-                        .alpha(0.4f)
-                        .flat(true));
-                newPlace.setTag(temp);
-            }
+//            for (int i = 0; i < returnedPlaces.size(); i++) {
+//                tonchev.yourplace.modul.Place temp = returnedPlaces.get(i);
+//                Log.d("resplac", returnedPlaces.get(i).getName() + " open now: " + returnedPlaces.get(i).getOpenNow() + " rating: " + returnedPlaces.get(i).getRating());
+//
+//                Marker newPlace = mMap.addMarker(new MarkerOptions()
+//                        .position(temp.getLatLng())
+//                        .title(temp.getName())
+//                        .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
+//                        .alpha(0.4f)
+//                        .flat(true));
+//                newPlace.setTag(temp);
+//            }
         }
     }
 }
